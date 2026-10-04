@@ -287,7 +287,6 @@ textarea { min-height: 220px; line-height: 1.6; font-weight: 500; resize: vertic
   <header>
     <div class="eyebrow">Teacher page · keep this link private</div>
     <h1 id="tClass">Class</h1>
-    <p class="soft" id="tTeacher"></p>
   </header>
   <div class="card">
     <h2>Worksheets for this class</h2>
@@ -904,7 +903,7 @@ $("w2Again").addEventListener("click", function () {
    TEACHER PAGE
    ===================================================================== */
 function renderTeacher(t) {
-  $("tClass").textContent = t.cls; $("tTeacher").textContent = t.teacher ? "Class teacher: " + t.teacher : "";
+  $("tClass").textContent = t.cls;
   document.title = t.cls + " teacher page";
   var link = location.origin + location.pathname + "?class=" + t.slug;
   $("tLink").textContent = link; $("tResults").href = t.results;
