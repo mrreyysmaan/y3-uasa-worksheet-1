@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>UASA Revision Worksheet 1</title>
+<title>Year 3 UASA Revision</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=DM+Mono:wght@500&family=Nunito:wght@500;700;800&display=swap">
 <style>
 :root {
@@ -33,6 +33,7 @@ body {
   padding-inline: 16px; padding-block: 0 48px;
 }
 .wrap { max-width: 640px; margin-inline: auto; display: flex; flex-direction: column; gap: 20px; }
+.view { padding-top: 16px; }
 
 .strip {
   position: sticky; top: 0; z-index: 5; background: var(--paper); padding-block: 10px;
@@ -42,25 +43,28 @@ body {
 .bar { flex: 1; min-width: 0; height: 14px; border-radius: 99px; background: var(--sheet); border: 2px solid var(--line); overflow: hidden; }
 .bar i { display: block; height: 100%; width: 0; background: var(--marker); transition: width .3s; }
 
-header h1 { font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1.1; margin: 8px 0 4px; text-wrap: balance; }
-header p { margin: 0; color: var(--ink-soft); }
+h1 { font-family: var(--display); font-weight: 800; font-size: 32px; line-height: 1.1; margin: 6px 0 4px; text-wrap: balance; }
+h2 { font-family: var(--display); font-weight: 800; font-size: 24px; line-height: 1.15; margin: 0; }
+h3 { font-family: var(--display); font-weight: 800; font-size: 20px; line-height: 1.2; margin: 0; }
+p { margin: 0; }
+.soft { color: var(--ink-soft); }
 .eyebrow { font-weight: 800; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
+a { color: var(--blue); font-weight: 800; }
 
-.who { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
-.who label { display: flex; flex-direction: column; gap: 4px; font-weight: 800; font-size: 14px; }
-.who select, .who input {
+.who { display: flex; flex-direction: column; gap: 10px; }
+label.field { display: flex; flex-direction: column; gap: 4px; font-weight: 800; font-size: 14px; }
+select, input[type="text"], textarea {
   font: inherit; font-weight: 700; font-size: 18px; color: var(--ink);
-  background: var(--sheet); border: 2px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 100%; min-height: 50px;
+  background: var(--sheet); border: 2px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 100%;
 }
-.who .err { color: var(--bad); font-weight: 800; margin: 0; }
-
-.how { background: var(--hint-bg); border-radius: 12px; padding: 12px 14px; margin: 0; }
+select, .who input { min-height: 50px; }
+.err { color: var(--bad); font-weight: 800; }
+.how { background: var(--hint-bg); border-radius: 12px; padding: 12px 14px; }
 .how b { font-weight: 800; }
 
-.module { background: var(--sheet); border-radius: 16px; padding: 18px 16px 16px; display: flex; flex-direction: column; gap: 12px; }
-h2 { font-family: var(--display); font-weight: 800; font-size: 24px; line-height: 1.15; margin: 0; }
-.module h2 span { display: inline-block; background: var(--marker); color: var(--marker-ink); border-radius: 8px; padding: 0 10px; margin-right: 8px; font-size: 16px; vertical-align: middle; }
-.module .task { margin: 0; color: var(--ink-soft); font-weight: 700; }
+.card { background: var(--sheet); border-radius: 16px; padding: 18px 16px 16px; display: flex; flex-direction: column; gap: 12px; }
+.card h2 span { display: inline-block; background: var(--marker); color: var(--marker-ink); border-radius: 8px; padding: 0 10px; margin-right: 8px; font-size: 16px; vertical-align: middle; }
+.task { color: var(--ink-soft); font-weight: 700; }
 ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 li.item { display: flex; flex-direction: column; gap: 10px; padding-block: 14px; border-top: 2px dashed var(--line); min-width: 0; }
 .clue b { color: var(--ink-soft); font-weight: 800; margin-right: 4px; font-variant-numeric: tabular-nums; }
@@ -76,12 +80,11 @@ li.item { display: flex; flex-direction: column; gap: 10px; padding-block: 14px;
 .tile.hinted { background: var(--hint-bg); border-style: dashed; border-color: var(--marker); }
 .word.focus .tile.next { border-color: var(--blue); box-shadow: 0 0 0 2px var(--blue); background: var(--sheet); }
 .word input {
-  position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0;
+  position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; min-height: 0;
   font-size: 16px; border: 0; padding: 0; margin: 0; background: transparent; color: transparent; cursor: text;
 }
 li.ok .tile { border-color: var(--good); background: var(--good-bg); color: var(--ink); }
 li.no .tile:not(.given) { border-color: var(--bad); background: var(--bad-bg); }
-
 .under { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; }
 .mark { font-weight: 800; font-size: 16px; border-radius: 8px; padding: 4px 10px; }
 li.ok .mark { color: var(--good); background: var(--good-bg); }
@@ -89,21 +92,21 @@ li.no .mark { color: var(--bad); background: var(--bad-bg); }
 .pic { background: var(--hint-bg); border-radius: 10px; padding: 6px 12px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
 .pic span { font-size: 30px; line-height: 1.2; }
 
-button {
-  font-family: var(--display); font-weight: 800; font-size: 19px; cursor: pointer;
-  border: 0; border-radius: 12px; padding: 10px 18px; min-height: 48px;
+button, a.btn {
+  font-family: var(--display); font-weight: 800; font-size: 19px; cursor: pointer; text-decoration: none; text-align: center;
+  border: 0; border-radius: 12px; padding: 10px 18px; min-height: 48px; display: inline-flex; align-items: center; justify-content: center;
   background: var(--blue); color: #fff;
 }
 button:disabled { opacity: .45; cursor: default; }
 button.quiet { background: transparent; color: var(--ink-soft); border: 2px solid var(--line); font-size: 16px; }
 button.hint { background: var(--hint-bg); color: var(--marker-ink); border: 2px solid var(--marker); font-size: 16px; min-height: 40px; padding: 4px 12px; }
 button.big { font-size: 22px; min-height: 58px; background: var(--good); }
-select:focus-visible, input:focus-visible, button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+button.back { align-self: flex-start; }
+select:focus-visible, input:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
 .foot { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
 .foot span { font-weight: 800; }
 
 .panel { border: 3px solid var(--ink); border-radius: 16px; background: var(--sheet); padding: 18px 16px; display: flex; flex-direction: column; gap: 12px; }
-.panel p { margin: 0; }
 .total { font-family: var(--display); font-weight: 800; font-size: 54px; line-height: 1; font-variant-numeric: tabular-nums; }
 .total small { font-size: 24px; color: var(--ink-soft); }
 .chips { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
@@ -113,79 +116,277 @@ select:focus-visible, input:focus-visible, button:focus-visible { outline: 3px s
 .status { border-radius: 10px; padding: 10px 12px; font-weight: 800; background: var(--hint-bg); display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .status.sent { background: var(--good-bg); color: var(--good); }
 .status.fail { background: var(--bad-bg); color: var(--bad); }
-.fix { display: flex; flex-direction: column; }
 .fix li { padding-block: 12px; border-top: 2px dashed var(--line); display: flex; flex-direction: column; gap: 4px; }
 .fix .yours, .fix .right { font-family: var(--mono); font-size: 19px; letter-spacing: .06em; overflow-wrap: anywhere; }
 .fix .yours { color: var(--bad); }
 .fix .right { color: var(--good); }
 .fix small { font-family: var(--body); font-weight: 800; font-size: 14px; letter-spacing: 0; color: var(--ink-soft); display: inline-block; min-width: 7.5em; }
 .practise { background: var(--paper); border-radius: 10px; padding: 10px 12px; font-weight: 700; }
+
+/* home */
+.sheets { display: flex; flex-direction: column; gap: 12px; }
+.sheets button { justify-content: space-between; text-align: left; gap: 12px; min-height: 72px; font-size: 21px; line-height: 1.2; }
+.sheets button small { display: block; font-family: var(--body); font-weight: 700; font-size: 15px; opacity: .9; }
+.sheets button em { font-style: normal; font-family: var(--body); font-size: 14px; font-weight: 800; background: var(--sheet); color: var(--good); border-radius: 8px; padding: 2px 8px; white-space: nowrap; }
+.classes { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+
+/* worksheet 2 */
+.sec { display: flex; flex-direction: column; gap: 10px; padding-block: 14px; border-top: 2px dashed var(--line); }
+.sec img { width: 100%; max-width: 340px; border-radius: 10px; border: 2px solid var(--line); background: #fff; }
+.line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-weight: 700; }
+.line input.blank { flex: 1 1 8em; min-width: 6em; width: auto; padding: 6px 10px; border-style: dashed; border-color: var(--blue); background: var(--paper); }
+.bank { display: flex; flex-wrap: wrap; gap: 6px; }
+.bank button { min-height: 36px; padding: 2px 12px; font-family: var(--body); font-size: 16px; font-weight: 800; background: var(--hint-bg); color: var(--marker-ink); border: 2px solid var(--marker); border-radius: 99px; }
+.bank-label { font-size: 14px; font-weight: 800; color: var(--ink-soft); }
+textarea { min-height: 220px; line-height: 1.6; font-weight: 500; resize: vertical; }
+.read { background: var(--paper); border-radius: 10px; padding: 12px 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.checks { display: flex; flex-direction: column; gap: 8px; }
+.checks label { display: flex; gap: 10px; align-items: flex-start; font-weight: 700; }
+.checks input { width: 24px; height: 24px; flex: none; margin-top: 2px; }
+
+/* teacher */
+.switch { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding-block: 14px; border-top: 2px dashed var(--line); }
+.switch div { min-width: 0; }
+.switch button.on { background: var(--good); }
+.switch button.off { background: var(--ink-soft); }
+.linkbox { font-family: var(--mono); font-size: 15px; background: var(--paper); border-radius: 10px; padding: 10px 12px; overflow-wrap: anywhere; user-select: all; }
 @media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
 </style>
 </head>
 <body>
-<div class="wrap">
+
+<!-- loading / problems -->
+<div id="vLoad" class="wrap view">
+  <div class="eyebrow">Year 3 English · UASA Revision</div>
+  <h1 id="loadTitle">Loading…</h1>
+  <p id="loadText" class="soft">Please wait a moment.</p>
+  <div class="foot"><button id="retryBtn" type="button" hidden>Try again</button></div>
+</div>
+
+<!-- no class in the link -->
+<div id="vPick" class="wrap view" hidden>
+  <div class="eyebrow">Year 3 English · UASA Revision</div>
+  <h1>Which class are you in?</h1>
+  <div class="classes" id="classList"></div>
+</div>
+
+<!-- pupil home -->
+<div id="vHome" class="wrap view" hidden>
+  <header>
+    <div class="eyebrow">Year 3 English · UASA Revision</div>
+    <h1 id="homeClass">Class</h1>
+  </header>
+  <div class="who">
+    <label class="field" for="pupil">Choose your name
+      <select id="pupil"></select>
+    </label>
+    <label class="field" for="otherName" id="otherWrap" hidden>Type your full name
+      <input id="otherName" type="text" autocomplete="off" autocapitalize="words" spellcheck="false" maxlength="80">
+    </label>
+    <p class="err" id="whoErr" hidden>Please choose your name first.</p>
+  </div>
+  <h2>Your worksheets</h2>
+  <div class="sheets" id="sheetList"></div>
+  <p class="how" id="noneOpen" hidden>No worksheet is open right now. Your teacher will tell you when to start.</p>
+</div>
+
+<!-- worksheet 1 -->
+<div id="vW1" class="wrap" hidden>
   <div class="strip" aria-live="polite">
     <b id="scoreTop">0 / 50</b>
     <div class="bar"><i id="barFill"></i></div>
   </div>
-
+  <button class="quiet back" type="button" data-home>← All worksheets</button>
   <header>
-    <div class="eyebrow">PdPR Year 3 English · 3 Pearl</div>
-    <h1>UASA Revision Worksheet 1</h1>
-    <p>50 words from Module 1 to Module 10.</p>
-    <div class="who">
-      <label for="pupil">Choose your name
-        <select id="pupil"></select>
-      </label>
-      <label for="otherName" id="otherWrap" hidden>Type your full name
-        <input id="otherName" type="text" autocomplete="off" autocapitalize="words" spellcheck="false" maxlength="80">
-      </label>
-      <p class="err" id="whoErr" hidden>Please choose your name first.</p>
-    </div>
+    <div class="eyebrow">Worksheet 1 · <span class="whoami"></span></div>
+    <h1>Vocabulary: 50 words</h1>
   </header>
-
-  <div id="work" class="wrap">
+  <div id="w1Work" class="wrap">
     <p class="how"><b>How to do it:</b> Read the clue. The yellow letter is given. Tap the boxes and type the other letters. Press <b>Check</b> at the end of each module. Stuck? Press <b>Hint</b>. When you finish everything, press <b>Submit to teacher</b>.</p>
     <main id="modules" class="wrap"></main>
     <section class="panel">
       <h2>Finished?</h2>
       <p>Your teacher gets your answers when you press the button. You will then see the correct answers.</p>
-      <button class="big" id="submitBtn" type="button">Submit to teacher</button>
+      <button class="big" id="w1Submit" type="button">Submit to teacher</button>
     </section>
   </div>
-
-  <section id="review" class="wrap" hidden>
+  <section id="w1Review" class="wrap" hidden>
     <div class="panel">
       <h2 id="rHello">My result</h2>
       <div class="total"><span id="rTotal">0</span><small> / 50</small></div>
       <div class="chips" id="chips"></div>
-      <div class="status" id="status"></div>
+      <div class="status"></div>
     </div>
-    <div class="module">
+    <div class="card">
       <h2>Learn from my mistakes</h2>
       <p class="task" id="fixNote"></p>
       <ol class="fix" id="fix"></ol>
       <div class="practise" id="practise" hidden></div>
     </div>
-    <div class="foot">
-      <button id="againBtn" type="button">Try the worksheet again</button>
-    </div>
+    <div class="foot"><button id="w1Again" type="button">Try the worksheet again</button></div>
   </section>
 </div>
 
-<script>
-// Web app address of the teacher's Google Sheet script. Leave empty until it is deployed.
-var ENDPOINT = "https://script.google.com/macros/s/AKfycbwaFYLXck3NUQ81Zb9cXIpiOF3LG7O4i1kGM1HIvn0lIz42Qguw0nXlVzADbpXCX4tc/exec";
-var CLASS_NAME = "3 Pearl";
-var PUPILS = ["Adni Hasya", "Ahmad Fahim Mikael", "Aisyah Rania", "Amirul Muhaimin", "Aydan Ziyad", "Farah Aisyah",
-  "Harraz", "Isma Nur Imani", "Izz Muzaffar", "Mikayla Aleesya", "Mohamad Harith Sufyan", "Mohamad Shafwan Farhan",
-  "Muhammad Adam", "Muhammad Adha Hadif", "Muhammad Affan Zhafran", "Muhammad Al Fateh", "Muhammad Aniq Fauzan",
-  "Muhammad Asyraaf", "Muhammad Imaan Rayyan", "Muhammad Irfan Syahmi", "Muhammad Mifzal Khairullah",
-  "Muhammad Naqiuddin", "Muhammad Qaiser Aydeen", "Muhammad Wildan Zaeef", "Nabreesa Affina", "Noor Harriz",
-  "Nur Adra Fathia", "Nur Aish", "Nur Faiqah Hasna", "Nur Keisha Medina", "Nur Qarira Azkayra", "Nurfathiah Naura",
-  "Raisya Qarirah", "Siti Nur Aqilah", "Wan Nur Hana Safeeya", "Zill Fayyadh Hayqal"];
+<!-- worksheet 2 -->
+<div id="vW2" class="wrap view" hidden>
+  <button class="quiet back" type="button" data-home>← All worksheets</button>
+  <header>
+    <div class="eyebrow">Worksheet 2 · <span class="whoami"></span></div>
+    <h1>Writing: My Holiday</h1>
+  </header>
+  <div id="w2Work" class="wrap">
+    <p class="how"><b>How to do it:</b> There are two holidays, A and B. Look at each picture and finish the sentences. You can tap a helper word to use it. Then press <b>Make my paragraph</b>, read it, and fix or add anything. Do both A and B, then press <b>Submit to teacher</b>.</p>
+    <main id="w2Tasks" class="wrap"></main>
+    <section class="panel">
+      <h2>Finished both paragraphs?</h2>
+      <p class="err" id="w2Err" hidden></p>
+      <button class="big" id="w2Submit" type="button">Submit to teacher</button>
+    </section>
+  </div>
+  <section id="w2Review" class="wrap" hidden>
+    <div class="panel">
+      <h2 id="w2Hello">My writing</h2>
+      <div class="status"></div>
+    </div>
+    <div class="card">
+      <h2>Check my own writing</h2>
+      <div class="checks">
+        <label><input type="checkbox" id="ck1"> Every sentence starts with a capital letter.</label>
+        <label><input type="checkbox" id="ck2"> Every sentence ends with a full stop.</label>
+        <label><input type="checkbox" id="ck3"> I wrote in full sentences.</label>
+        <label><input type="checkbox" id="ck4"> I checked my spelling.</label>
+      </div>
+      <h3>A) At the beach</h3><div class="read" id="readA"></div>
+      <h3>B) At the cinema</h3><div class="read" id="readB"></div>
+    </div>
+    <div class="foot"><button id="w2Again" type="button">Change my writing and send again</button></div>
+  </section>
+</div>
 
+<!-- teacher -->
+<div id="vTeacher" class="wrap view" hidden>
+  <header>
+    <div class="eyebrow">Teacher page · keep this link private</div>
+    <h1 id="tClass">Class</h1>
+    <p class="soft" id="tTeacher"></p>
+  </header>
+  <div class="card">
+    <h2>Worksheets for this class</h2>
+    <p class="task">Pupils only see a worksheet while it is open.</p>
+    <div id="tSwitches"></div>
+    <p class="err" id="tErr" hidden>That did not save. Check your internet and try again.</p>
+  </div>
+  <div class="card">
+    <h2>Link for pupils</h2>
+    <p class="task">Post this in your class group.</p>
+    <div class="linkbox" id="tLink"></div>
+    <div class="foot"><button id="tCopy" type="button">Copy link</button></div>
+  </div>
+  <div class="card">
+    <h2>Results</h2>
+    <p class="task">Answers, scores and who has not submitted yet.</p>
+    <div class="foot"><a class="btn" id="tResults" target="_blank" rel="noopener">Open results sheet</a><button class="quiet" id="tRefresh" type="button">Refresh counts</button></div>
+  </div>
+</div>
+
+<script>
+var ENDPOINT = "https://script.google.com/macros/s/AKfycbwaFYLXck3NUQ81Zb9cXIpiOF3LG7O4i1kGM1HIvn0lIz42Qguw0nXlVzADbpXCX4tc/exec";
+var SHEETS = [
+  { id: "w1", name: "Worksheet 1", sub: "Vocabulary: 50 words" },
+  { id: "w2", name: "Worksheet 2", sub: "Writing: My Holiday" }
+];
+var params = new URLSearchParams(location.search);
+var SLUG = (params.get("class") || "").toLowerCase(), TCODE = params.get("teacher") || "";
+var cfg = null; // { cls, slug, open: {w1, w2}, names: [] }
+
+function $(id) { return document.getElementById(id); }
+function el(tag, cls, text) { var x = document.createElement(tag); if (cls) x.className = cls; if (text != null) x.textContent = text; return x; }
+function load(key, fallback) { try { var v = JSON.parse(localStorage.getItem(key)); return v == null ? fallback : v; } catch (e) { return fallback; } }
+function store(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
+function api(q) { return fetch(ENDPOINT + "?" + new URLSearchParams(q).toString()).then(function (r) { return r.json(); }); }
+function post(body) { return fetch(ENDPOINT, { method: "POST", body: JSON.stringify(body) }).then(function (r) { return r.json(); }); }
+function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 10); }
+
+var VIEWS = ["vLoad", "vPick", "vHome", "vW1", "vW2", "vTeacher"], current = "vLoad";
+function show(id) { VIEWS.forEach(function (v) { $(v).hidden = v !== id; }); current = id; window.scrollTo(0, 0); }
+function problem(title, text, retry) {
+  $("loadTitle").textContent = title; $("loadText").textContent = text; $("retryBtn").hidden = !retry; show("vLoad");
+}
+$("retryBtn").addEventListener("click", function () { location.reload(); });
+
+/* ---------- sending to the teacher ---------- */
+var QKEY = "y3:queue", queue = load(QKEY, []), sending = false, hasSent = false;
+function setStatus(kind, text, retry) {
+  document.querySelectorAll(".status").forEach(function (box) {
+    box.className = "status" + (kind ? " " + kind : ""); box.textContent = text;
+    if (retry) { var b = el("button", "quiet", "Send again"); b.type = "button"; b.addEventListener("click", send); box.appendChild(b); }
+  });
+}
+function send() {
+  if (!queue.length) { setStatus("sent", "✓ Sent to your teacher."); return; }
+  if (sending) return; sending = true;
+  setStatus("", "Sending to your teacher…");
+  post(queue[0]).then(function (res) {
+    sending = false;
+    if (!res || !res.ok) throw new Error("refused");
+    queue.shift(); store(QKEY, queue); send();
+  }).catch(function () { sending = false; setStatus("fail", "Not sent yet. Check your internet, then press Send again.", true); });
+}
+
+/* ---------- who is the pupil ---------- */
+var sel = $("pupil"), other = $("otherName"), who = { pid: "", other: "" };
+function whoKey() { return "y3:" + SLUG + ":who"; }
+function identity() {
+  if (who.pid === "other") { var nm = (who.other || "").trim().replace(/\s+/g, " "); return nm.length >= 3 ? { no: "", name: nm, pid: "x:" + nm.toLowerCase() } : null; }
+  var i = parseInt(who.pid, 10);
+  return cfg && i >= 1 && i <= cfg.names.length ? { no: i, name: cfg.names[i - 1], pid: "n" + i } : null;
+}
+function onWho() {
+  who = { pid: sel.value, other: other.value }; $("otherWrap").hidden = sel.value !== "other";
+  $("whoErr").hidden = true; store(whoKey(), who); listSheets();
+}
+sel.addEventListener("change", onWho); other.addEventListener("input", onWho);
+
+function renderHome() {
+  $("homeClass").textContent = cfg.cls;
+  document.title = cfg.cls + " UASA Revision";
+  who = load(whoKey(), { pid: "", other: "" });
+  sel.textContent = "";
+  sel.appendChild(new Option("Tap here to choose", ""));
+  cfg.names.forEach(function (p, i) { sel.appendChild(new Option((i + 1) + ". " + p, String(i + 1))); });
+  sel.appendChild(new Option("My name is not here", "other"));
+  sel.value = who.pid || ""; if (sel.value !== (who.pid || "")) sel.value = "";
+  other.value = who.other || ""; $("otherWrap").hidden = sel.value !== "other";
+  listSheets();
+}
+function stateKey(w, me) { return "y3:" + SLUG + ":" + w + ":" + me.pid; }
+function listSheets() {
+  var box = $("sheetList"), me = identity(), any = false; box.textContent = "";
+  SHEETS.forEach(function (s) {
+    if (!cfg.open[s.id]) return; any = true;
+    var b = el("button"); b.type = "button";
+    var left = el("span", "", s.name); left.appendChild(el("small", "", s.sub)); b.appendChild(left);
+    var st = me ? load(stateKey(s.id, me), null) : null;
+    if (st && st.done) b.appendChild(el("em", "", s.id === "w1" ? "Submitted " + st.done.score + "/50" : "Submitted"));
+    b.addEventListener("click", function () { openSheet(s.id); });
+    box.appendChild(b);
+  });
+  $("noneOpen").hidden = any;
+}
+function openSheet(id) {
+  var me = identity();
+  if (!me) {
+    $("whoErr").hidden = false; $("whoErr").textContent = who.pid === "other" ? "Please type your full name first." : "Please choose your name first.";
+    sel.scrollIntoView({ block: "center" }); return;
+  }
+  document.querySelectorAll(".whoami").forEach(function (x) { x.textContent = me.name + " · " + cfg.cls; });
+  if (id === "w1") { startW1(me); show("vW1"); } else { startW2(me); show("vW2"); }
+}
+document.querySelectorAll("[data-home]").forEach(function (b) { b.addEventListener("click", function () { listSheets(); show("vHome"); }); });
+
+/* =====================================================================
+   WORKSHEET 1: vocabulary
+   ===================================================================== */
 // [clue, answer, picture hint, optional hint words]
 var MODULES = [
   { t: "Welcome!", i: "Read the clues. Write the word.", q: [
@@ -253,16 +454,12 @@ var Q = [];
 MODULES.forEach(function (m, mi) {
   m.q.forEach(function (r) { Q.push({ clue: r[0], answer: r[1], words: r[1].split(" "), pic: r[2], tip: r[3] || "", mi: mi }); });
 });
-var TOTAL = Q.length, KEY = "uasa-ws1-v2";
+var TOTAL = Q.length;
 
-// state.q[n] = { t: typed letters per word, hp: hinted letters per word, pic: picture shown, tries, ok }
-var state = { pid: "", other: "", attempt: 1, q: {}, done: null, pending: [] };
-try { var saved = JSON.parse(localStorage.getItem(KEY)); if (saved && saved.q) state = saved; } catch (e) {}
-if (!state.pending) state.pending = [];
-function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
-function qs(n) { return state.q[n] || (state.q[n] = { t: [], hp: [], pic: false, tries: 0, ok: false }); }
-function el(tag, cls, text) { var x = document.createElement(tag); if (cls) x.className = cls; if (text != null) x.textContent = text; return x; }
-function $(id) { return document.getElementById(id); }
+// s1.q[n] = { t: typed letters per word, hp: hinted letters per word, pic: picture shown, tries, ok, flag }
+var s1 = null, me1 = null, built1 = false;
+function save1() { store(stateKey("w1", me1), s1); }
+function qs(n) { return s1.q[n] || (s1.q[n] = { t: [], hp: [], pic: false, tries: 0, ok: false }); }
 
 function full(n, wi) {
   var w = Q[n - 1].words[wi], s = qs(n), hp = s.hp[wi] || 0;
@@ -270,7 +467,7 @@ function full(n, wi) {
 }
 function wordRight(n, wi) { return full(n, wi).toLowerCase() === Q[n - 1].words[wi].toLowerCase(); }
 function allRight(n) { return Q[n - 1].words.every(function (w, wi) { return wordRight(n, wi); }); }
-function touched(n) { var s = qs(n); return s.t.some(function (v) { return v; }); }
+function touched(n) { return qs(n).t.some(function (v) { return v; }); }
 function usedHint(n) { var s = qs(n); return s.pic || s.hp.some(function (v) { return v > 0; }); }
 function moreLetters(n) {
   var s = qs(n), found = -1;
@@ -283,21 +480,23 @@ function written(n) {
   return Q[n - 1].words.map(function (w, wi) { var f = full(n, wi); return f + new Array(w.length - f.length + 1).join("_"); }).join(" ");
 }
 
-/* ---------- build the worksheet ---------- */
-var host = $("modules");
-MODULES.forEach(function (m, mi) {
-  var sec = el("section", "module");
-  var h = el("h2"); h.appendChild(el("span", "", "Module " + (mi + 1))); h.appendChild(document.createTextNode(m.t));
-  sec.appendChild(h); sec.appendChild(el("p", "task", m.i));
-  var ol = el("ol");
-  for (var k = 1; k <= 5; k++) ol.appendChild(buildItem(mi * 5 + k));
-  sec.appendChild(ol);
-  var foot = el("div", "foot"), btn = el("button", "", "Check Module " + (mi + 1)); btn.type = "button";
-  var tally = el("span"); tally.id = "tally" + mi;
-  btn.addEventListener("click", function () { checkModule(mi); });
-  foot.appendChild(btn); foot.appendChild(tally); sec.appendChild(foot);
-  host.appendChild(sec);
-});
+function buildW1() {
+  var host = $("modules");
+  MODULES.forEach(function (m, mi) {
+    var sec = el("section", "card");
+    var h = el("h2"); h.appendChild(el("span", "", "Module " + (mi + 1))); h.appendChild(document.createTextNode(m.t));
+    sec.appendChild(h); sec.appendChild(el("p", "task", m.i));
+    var ol = el("ol");
+    for (var k = 1; k <= 5; k++) ol.appendChild(buildItem(mi * 5 + k));
+    sec.appendChild(ol);
+    var foot = el("div", "foot"), btn = el("button", "", "Check Module " + (mi + 1)); btn.type = "button";
+    var tally = el("span"); tally.id = "tally" + mi;
+    btn.addEventListener("click", function () { checkModule(mi); });
+    foot.appendChild(btn); foot.appendChild(tally); sec.appendChild(foot);
+    host.appendChild(sec);
+  });
+  built1 = true;
+}
 
 function buildItem(n) {
   var q = Q[n - 1], li = el("li", "item"); li.id = "q" + n;
@@ -316,7 +515,7 @@ function buildItem(n) {
       var v = inp.value.replace(/[^a-zA-Z]/g, "").toLowerCase().slice(0, max);
       inp.value = v; s.t[wi] = v;
       s.flag = false; li.classList.remove("no"); li.querySelector(".mark").hidden = true;
-      drawWord(n, wi); save();
+      drawWord(n, wi); save1();
       if (v.length === max && wi + 1 < q.words.length && !wordRight(n, wi + 1)) $("a" + n + "_" + (wi + 1)).focus();
     });
     inp.addEventListener("focus", function () { box.classList.add("focus"); toEnd(inp); });
@@ -351,7 +550,7 @@ function paint(n) {
   var q = Q[n - 1], s = qs(n), li = $("q" + n);
   q.words.forEach(function (w, wi) { drawWord(n, wi); });
   var bad = !s.ok && s.tries > 0 && s.flag;
-  li.classList.toggle("ok", s.ok); li.classList.toggle("no", bad);
+  li.classList.toggle("ok", s.ok); li.classList.toggle("no", !!bad);
   var mark = li.querySelector(".mark");
   mark.textContent = s.ok ? "✓ Correct" : (bad ? "✗ Try again" : ""); mark.hidden = !mark.textContent;
   var pic = li.querySelector(".pic"); pic.hidden = !s.pic || s.ok;
@@ -370,7 +569,7 @@ function giveHint(n) {
     var wi = moreLetters(n); if (wi < 0) return;
     s.hp[wi] = (s.hp[wi] || 0) + 1; s.t[wi] = ""; s.flag = false;
   }
-  paint(n); save();
+  paint(n); save1();
   var next = moreLetters(n);
   var target = $("a" + n + "_" + (next >= 0 ? next : 0)); if (target && !target.disabled) target.focus();
 }
@@ -382,7 +581,7 @@ function checkModule(mi) {
     if (allRight(n)) s.ok = true; else { s.tries++; s.flag = true; }
     paint(n);
   }
-  save(); totals();
+  save1(); totals();
 }
 
 function totals() {
@@ -392,40 +591,28 @@ function totals() {
     for (var k = 1; k <= 5; k++) { var s = qs(mi * 5 + k); if (s.ok) c++; if (s.ok || s.tries) any = true; }
     sum += c; $("tally" + mi).textContent = any ? c + " / 5 correct" : "";
   });
-  if (state.done) sum = state.done.score;
+  if (s1.done) sum = s1.done.score;
   $("scoreTop").textContent = sum + " / " + TOTAL;
   $("barFill").style.width = (sum / TOTAL * 100) + "%";
 }
 
-/* ---------- who is the pupil ---------- */
-var sel = $("pupil"), other = $("otherName");
-sel.appendChild(new Option("Tap here to choose", ""));
-PUPILS.forEach(function (p, i) { sel.appendChild(new Option((i + 1) + ". " + p, String(i + 1))); });
-sel.appendChild(new Option("My name is not here", "other"));
-sel.value = state.pid || ""; other.value = state.other || "";
-function who() {
-  $("otherWrap").hidden = sel.value !== "other";
-  state.pid = sel.value; state.other = other.value; $("whoErr").hidden = true; save();
-}
-sel.addEventListener("change", who); other.addEventListener("input", who);
-function identity() {
-  if (state.pid === "other") { var nm = (state.other || "").trim().replace(/\s+/g, " "); return nm.length >= 3 ? { no: "", name: nm, pid: "x:" + nm.toLowerCase() } : null; }
-  var i = parseInt(state.pid, 10);
-  return i >= 1 && i <= PUPILS.length ? { no: i, name: PUPILS[i - 1], pid: "n" + i } : null;
+function startW1(me) {
+  me1 = me; s1 = load(stateKey("w1", me), null) || { attempt: 1, q: {}, done: null };
+  if (!built1) buildW1();
+  for (var n = 1; n <= TOTAL; n++) paint(n);
+  $("w1Review").hidden = true; $("w1Work").hidden = false;
+  totals(); if (s1.done) review1();
 }
 
-/* ---------- submit ---------- */
-var submitBtn = $("submitBtn"), armed = false, armTimer;
-submitBtn.addEventListener("click", function () {
-  var me = identity();
-  if (!me) { $("whoErr").hidden = false; $("whoErr").textContent = state.pid === "other" ? "Please type your full name first." : "Please choose your name first."; sel.scrollIntoView({ block: "center" }); return; }
+var w1Submit = $("w1Submit"), armed1 = false, armTimer1;
+w1Submit.addEventListener("click", function () {
   var empty = 0; for (var n = 1; n <= TOTAL; n++) if (!touched(n) && !qs(n).ok) empty++;
-  if (empty && !armed) {
-    armed = true; submitBtn.textContent = empty + " empty question" + (empty > 1 ? "s" : "") + ". Press again to submit anyway";
-    clearTimeout(armTimer); armTimer = setTimeout(function () { armed = false; submitBtn.textContent = "Submit to teacher"; }, 6000);
+  if (empty && !armed1) {
+    armed1 = true; w1Submit.textContent = empty + " empty question" + (empty > 1 ? "s" : "") + ". Press again to submit anyway";
+    clearTimeout(armTimer1); armTimer1 = setTimeout(function () { armed1 = false; w1Submit.textContent = "Submit to teacher"; }, 6000);
     return;
   }
-  armed = false; clearTimeout(armTimer); submitBtn.textContent = "Submit to teacher";
+  armed1 = false; clearTimeout(armTimer1); w1Submit.textContent = "Submit to teacher";
   var ok = "", hintMap = "", ans = [], hints = [], tries = [], score = 0;
   for (n = 1; n <= TOTAL; n++) {
     var s = qs(n), right = allRight(n), letters = s.hp.reduce(function (a, b) { return a + (b || 0); }, 0);
@@ -434,43 +621,20 @@ submitBtn.addEventListener("click", function () {
     ans.push(written(n)); tries.push(s.tries);
     hints.push(usedHint(n) ? "Q" + n + " " + (s.pic ? "picture" : "") + (letters ? " +" + letters + " letter" + (letters > 1 ? "s" : "") : "") : "");
   }
-  var payload = {
-    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 10),
-    pid: me.pid, no: me.no, name: me.name, cls: CLASS_NAME, attempt: state.attempt,
+  queue.push({
+    a: "submit", c: SLUG, w: "w1", id: newId(), pid: me1.pid, no: me1.no, name: me1.name, attempt: s1.attempt,
     score: score, ok: ok, hintMap: hintMap, ans: ans, tries: tries,
     hints: hints.filter(function (x) { return x; }).join("; ")
-  };
-  state.done = { score: score, ok: ok, ans: ans, name: me.name };
-  state.pending.push(payload); save();
-  showReview(); window.scrollTo(0, 0); send();
+  });
+  store(QKEY, queue);
+  s1.done = { score: score, ok: ok, ans: ans }; save1();
+  review1(); window.scrollTo(0, 0);
 });
 
-function setStatus(kind, text, retry) {
-  var box = $("status"); box.className = "status" + (kind ? " " + kind : ""); box.textContent = text;
-  if (retry) { var b = el("button", "quiet", "Send again"); b.type = "button"; b.addEventListener("click", send); box.appendChild(b); }
-}
-var sending = false;
-function send() {
-  if (!state.pending.length) { if (state.done) setStatus("sent", "✓ Sent to your teacher."); return; }
-  if (!ENDPOINT) { setStatus("", "Saved on this device only. The teacher's answer sheet is not connected yet."); return; }
-  if (sending) return; sending = true;
-  setStatus("", "Sending to your teacher…");
-  var p = state.pending[0];
-  fetch(ENDPOINT, { method: "POST", body: JSON.stringify(p) })
-    .then(function (r) { return r.json(); })
-    .then(function (res) {
-      sending = false;
-      if (!res || !res.ok) throw new Error("refused");
-      state.pending.shift(); save(); send();
-    })
-    .catch(function () { sending = false; setStatus("fail", "Not sent yet. Check your internet, then press Send again.", true); });
-}
-
-/* ---------- review ---------- */
-function showReview() {
-  var d = state.done; if (!d) return;
-  $("work").hidden = true; $("review").hidden = false; sel.disabled = true; other.disabled = true;
-  $("rHello").textContent = "Result for " + d.name;
+function review1() {
+  var d = s1.done;
+  $("w1Work").hidden = true; $("w1Review").hidden = false;
+  $("rHello").textContent = "Result for " + me1.name;
   $("rTotal").textContent = d.score;
   var chips = $("chips"); chips.textContent = "";
   MODULES.forEach(function (m, mi) {
@@ -493,16 +657,227 @@ function showReview() {
   totals(); send();
 }
 
-$("againBtn").addEventListener("click", function () {
-  state.q = {}; state.done = null; state.attempt = (state.attempt || 1) + 1; save();
+$("w1Again").addEventListener("click", function () {
+  s1 = { attempt: (s1.attempt || 1) + 1, q: {}, done: null }; save1();
   for (var n = 1; n <= TOTAL; n++) paint(n);
-  $("review").hidden = true; $("work").hidden = false; sel.disabled = false; other.disabled = false;
+  $("w1Review").hidden = true; $("w1Work").hidden = false;
   totals(); window.scrollTo(0, 0);
 });
 
-for (var n0 = 1; n0 <= TOTAL; n0++) paint(n0);
-who(); totals();
-if (state.done) showReview(); else if (state.pending.length) send();
+/* =====================================================================
+   WORKSHEET 2: guided writing
+   Each line is a sentence made of [starter] pieces; every piece is followed by one blank.
+   ===================================================================== */
+var FEEL = ["fun", "exciting", "beautiful", "relaxing", "hot", "sunny", "windy", "amazing"];
+var BANK_B = ["cinema", "family", "friends", "movie", "popcorn", "drink", "shopping", "fun", "exciting", "funny", "delicious", "happy"];
+var TASKS = [
+  { id: "a", title: "At the beach", end: "I had a great holiday!", secs: [
+    { h: "1. At the beach", img: "img/a1.webp", alt: "A family at the beach on a sunny day", lines: [["I went to", "with"], ["It was"]], bank: FEEL },
+    { h: "2. Activities", img: "img/a2.webp", alt: "A boy snorkelling with fish", lines: [["I went", "at"], ["It was"]], bank: ["snorkelling", "swimming"].concat(FEEL) },
+    { h: "3. On the beach", img: "img/a3.webp", alt: "Two children building a sandcastle", lines: [["We", "and"], ["It was"]], bank: ["built a sandcastle", "collected shells"].concat(FEEL) },
+    { h: "4. In the evening", img: "img/a4.webp", alt: "A girl eating and watching the sunset", lines: [["In the evening, I"], ["I ate"], ["It was"]], bank: FEEL } ] },
+  { id: "b", title: "At the cinema", end: "I had a great holiday!", secs: [
+    { h: "1. Going to the cinema", img: "img/b1.webp", alt: "A family outside a cinema", lines: [["I went to"], ["I went with"], ["It was"]], bank: BANK_B },
+    { h: "2. At the cinema", img: "img/b2.webp", alt: "Two children watching a movie with popcorn", lines: [["I watched"], ["The movie was"], ["It was"]], bank: BANK_B },
+    { h: "3. After the movie", img: "img/b3.webp", alt: "Two children shopping with bags and a drink", lines: [["After the movie, we"], ["We went to"], ["I ate"], ["I drank"]], bank: BANK_B },
+    { h: "4. At home", img: "img/b4.webp", alt: "A girl resting happily at home", lines: [["When I got home, I"], ["I felt"], ["It was"]], bank: BANK_B } ] }
+];
+// s2 = { attempt, blanks: {a: [], b: []}, para: {a: "", b: ""}, done }
+var s2 = null, me2 = null, built2 = false, lastBlank = {};
+function save2() { store(stateKey("w2", me2), s2); }
+function countWords(t) { t = String(t || "").trim(); return t ? t.split(/\s+/).length : 0; }
+
+function buildW2() {
+  var host = $("w2Tasks");
+  TASKS.forEach(function (task, ti) {
+    var card = el("section", "card"), h = el("h2");
+    h.appendChild(el("span", "", task.id.toUpperCase())); h.appendChild(document.createTextNode("My Holiday: " + task.title));
+    card.appendChild(h);
+    var bi = 0;
+    task.secs.forEach(function (sec, si) {
+      var box = el("div", "sec"); box.appendChild(el("h3", "", sec.h));
+      var img = el("img"); img.src = sec.img; img.alt = sec.alt; img.loading = "lazy"; box.appendChild(img);
+      sec.lines.forEach(function (line) {
+        var row = el("div", "line");
+        line.forEach(function (starter, pi) {
+          var idx = bi++, inp = el("input", "blank"); inp.type = "text"; inp.id = "b_" + task.id + "_" + idx;
+          inp.setAttribute("autocomplete", "off"); inp.setAttribute("autocorrect", "off");
+          inp.setAttribute("autocapitalize", "off"); inp.setAttribute("spellcheck", "false"); inp.maxLength = 80;
+          inp.setAttribute("aria-label", starter + " …");
+          inp.dataset.sec = task.id + si;
+          inp.addEventListener("input", function () { s2.blanks[task.id][idx] = inp.value; save2(); });
+          inp.addEventListener("focus", function () { lastBlank[task.id + si] = inp; });
+          row.appendChild(el("span", "", starter)); row.appendChild(inp);
+          if (pi === line.length - 1) row.appendChild(el("span", "", "."));
+        });
+        box.appendChild(row);
+      });
+      if (si === task.secs.length - 1) box.appendChild(el("div", "line", task.end));
+      box.appendChild(el("div", "bank-label", "Helper words (tap to use)"));
+      var bank = el("div", "bank");
+      sec.bank.forEach(function (word) {
+        var b = el("button", "", word); b.type = "button";
+        b.addEventListener("click", function () { useWord(task.id, si, box, word); });
+        bank.appendChild(b);
+      });
+      box.appendChild(bank); card.appendChild(box);
+    });
+    var pbox = el("div", "sec"); pbox.appendChild(el("h3", "", "My paragraph: " + task.title));
+    var make = el("button", "", "Make my paragraph"); make.type = "button"; make.id = "make_" + task.id;
+    var ta = el("textarea"); ta.id = "para_" + task.id; ta.setAttribute("spellcheck", "false"); ta.maxLength = 1500;
+    ta.setAttribute("aria-label", "My paragraph: " + task.title);
+    ta.placeholder = "Finish the sentences above, then press Make my paragraph. You can also type here.";
+    var wc = el("div", "bank-label"); wc.id = "wc_" + task.id;
+    ta.addEventListener("input", function () { s2.para[task.id] = ta.value; wc.textContent = countWords(ta.value) + " words"; save2(); });
+    var armed = false, timer;
+    make.addEventListener("click", function () {
+      var built = assemble(task), cur = ta.value.trim();
+      if (!built) { wc.textContent = "Finish some sentences first."; return; }
+      if (cur && cur !== built && !armed) {
+        armed = true; make.textContent = "Press again to replace what I wrote";
+        clearTimeout(timer); timer = setTimeout(function () { armed = false; make.textContent = "Make my paragraph"; }, 6000);
+        return;
+      }
+      armed = false; clearTimeout(timer); make.textContent = "Make my paragraph";
+      ta.value = built; s2.para[task.id] = built; wc.textContent = countWords(built) + " words"; save2();
+    });
+    pbox.appendChild(make); pbox.appendChild(ta); pbox.appendChild(wc); card.appendChild(pbox);
+    host.appendChild(card);
+  });
+  built2 = true;
+}
+
+function useWord(tid, si, box, word) {
+  var inp = lastBlank[tid + si];
+  if (!inp) { var all = box.querySelectorAll("input.blank"); for (var i = 0; i < all.length && !inp; i++) if (!all[i].value.trim()) inp = all[i]; inp = inp || all[all.length - 1]; }
+  inp.value = inp.value.trim() ? inp.value.replace(/\s+$/, "") + " " + word : word;
+  inp.dispatchEvent(new Event("input"));
+}
+
+// Joins the finished sentences. A sentence is left out if its first blank is empty.
+function assemble(task) {
+  var out = [], bi = 0, vals = s2.blanks[task.id];
+  task.secs.forEach(function (sec) {
+    sec.lines.forEach(function (line) {
+      var parts = [];
+      line.forEach(function (starter, pi) {
+        var v = String(vals[bi++] || "").trim().replace(/[.!?,;\s]+$/, "");
+        if (pi === 0 && !v) parts = null;
+        if (parts && v) parts.push(starter + " " + v);
+      });
+      if (parts && parts.length) out.push(parts.join(" ") + ".");
+    });
+  });
+  if (!out.length) return "";
+  out.push(task.end);
+  return out.join(" ");
+}
+
+function startW2(me) {
+  me2 = me; s2 = load(stateKey("w2", me), null) || { attempt: 1, blanks: { a: [], b: [] }, para: { a: "", b: "" }, done: null };
+  if (!built2) buildW2();
+  lastBlank = {};
+  TASKS.forEach(function (task) {
+    document.querySelectorAll('input[id^="b_' + task.id + '_"]').forEach(function (inp) {
+      inp.value = s2.blanks[task.id][parseInt(inp.id.split("_")[2], 10)] || "";
+    });
+    $("para_" + task.id).value = s2.para[task.id] || "";
+    $("wc_" + task.id).textContent = countWords(s2.para[task.id]) + " words";
+  });
+  $("w2Err").hidden = true; $("w2Review").hidden = true; $("w2Work").hidden = false;
+  if (s2.done) review2();
+}
+
+var w2Submit = $("w2Submit"), armed2 = false, armTimer2;
+w2Submit.addEventListener("click", function () {
+  var pa = (s2.para.a || "").trim(), pb = (s2.para.b || "").trim(), err = $("w2Err");
+  if (!pa && !pb) { err.hidden = false; err.textContent = "Write your paragraphs first. Press Make my paragraph under each holiday."; return; }
+  if ((!pa || !pb) && !armed2) {
+    armed2 = true; err.hidden = false; err.textContent = "Your paragraph for " + (!pa ? "A) At the beach" : "B) At the cinema") + " is empty.";
+    w2Submit.textContent = "Press again to submit anyway";
+    clearTimeout(armTimer2); armTimer2 = setTimeout(function () { armed2 = false; w2Submit.textContent = "Submit to teacher"; }, 6000);
+    return;
+  }
+  armed2 = false; clearTimeout(armTimer2); w2Submit.textContent = "Submit to teacher"; err.hidden = true;
+  queue.push({ a: "submit", c: SLUG, w: "w2", id: newId(), pid: me2.pid, no: me2.no, name: me2.name, attempt: s2.attempt, pa: pa, pb: pb });
+  store(QKEY, queue);
+  s2.done = { pa: pa, pb: pb }; save2();
+  review2(); window.scrollTo(0, 0);
+});
+
+function review2() {
+  $("w2Work").hidden = true; $("w2Review").hidden = false;
+  $("w2Hello").textContent = "Writing by " + me2.name;
+  $("readA").textContent = s2.done.pa || "(nothing written)";
+  $("readB").textContent = s2.done.pb || "(nothing written)";
+  ["ck1", "ck2", "ck3", "ck4"].forEach(function (id) { $(id).checked = false; });
+  send();
+}
+$("w2Again").addEventListener("click", function () {
+  s2.done = null; s2.attempt = (s2.attempt || 1) + 1; save2();
+  $("w2Review").hidden = true; $("w2Work").hidden = false; window.scrollTo(0, 0);
+});
+
+/* =====================================================================
+   TEACHER PAGE
+   ===================================================================== */
+function renderTeacher(t) {
+  $("tClass").textContent = t.cls; $("tTeacher").textContent = t.teacher ? "Class teacher: " + t.teacher : "";
+  document.title = t.cls + " teacher page";
+  var link = location.origin + location.pathname + "?class=" + t.slug;
+  $("tLink").textContent = link; $("tResults").href = t.results;
+  var box = $("tSwitches"); box.textContent = "";
+  SHEETS.forEach(function (s) {
+    var row = el("div", "switch"), left = el("div"), on = !!t.open[s.id];
+    left.appendChild(el("h3", "", s.name + " · " + s.sub));
+    left.appendChild(el("div", "soft", (t.submitted[s.id] || 0) + " of " + t.pupils + " pupils submitted"));
+    var b = el("button", on ? "on" : "off", on ? "OPEN · tap to close" : "CLOSED · tap to open"); b.type = "button";
+    b.addEventListener("click", function () {
+      b.disabled = true; b.textContent = "Saving…"; $("tErr").hidden = true;
+      post({ a: "toggle", k: TCODE, w: s.id, on: !on }).then(function (res) {
+        if (!res || !res.ok) throw new Error("refused"); renderTeacher(res);
+      }).catch(function () { $("tErr").hidden = false; b.disabled = false; b.textContent = on ? "OPEN · tap to close" : "CLOSED · tap to open"; });
+    });
+    row.appendChild(left); row.appendChild(b); box.appendChild(row);
+  });
+}
+$("tCopy").addEventListener("click", function () {
+  var text = $("tLink").textContent, btn = $("tCopy");
+  navigator.clipboard.writeText(text).then(function () { btn.textContent = "Copied"; setTimeout(function () { btn.textContent = "Copy link"; }, 2000); })
+    .catch(function () { var r = document.createRange(); r.selectNodeContents($("tLink")); var s = getSelection(); s.removeAllRanges(); s.addRange(r); });
+});
+function loadTeacher() {
+  return api({ a: "teacher", k: TCODE }).then(function (res) {
+    if (!res.ok) { problem("This teacher link is not right", "Please ask for your teacher link again.", false); return; }
+    renderTeacher(res); if (current !== "vTeacher") show("vTeacher");
+  });
+}
+$("tRefresh").addEventListener("click", function () { loadTeacher().catch(function () { $("tErr").hidden = false; }); });
+
+/* =====================================================================
+   START
+   ===================================================================== */
+var NOT_READY = "This page is still being set up, or the internet is not working. Please try again in a moment.";
+if (TCODE) {
+  loadTeacher().catch(function () { problem("Could not load", NOT_READY, true); });
+} else if (!SLUG) {
+  api({ a: "classes" }).then(function (res) {
+    if (!res.ok) throw new Error("refused");
+    var box = $("classList");
+    res.classes.forEach(function (c) { var a = el("a", "btn", c.name); a.href = "?class=" + c.slug; box.appendChild(a); });
+    show("vPick");
+  }).catch(function () { problem("Could not load", NOT_READY, true); });
+} else {
+  cfg = load("y3:" + SLUG + ":cfg", null);
+  if (cfg) { renderHome(); show("vHome"); if (queue.length) send(); }
+  api({ a: "class", c: SLUG }).then(function (res) {
+    if (!res.ok) { if (!cfg) problem("This link is not right", "Please ask your teacher for the link again.", false); return; }
+    var first = !cfg;
+    cfg = { cls: res.cls, slug: res.slug, open: res.open, names: res.names }; store("y3:" + SLUG + ":cfg", cfg);
+    if (first) { renderHome(); show("vHome"); if (queue.length) send(); }
+    else if (current === "vHome") renderHome();
+  }).catch(function () { if (!cfg) problem("Could not load", NOT_READY, true); });
+}
 </script>
 </body>
 </html>
