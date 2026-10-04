@@ -148,9 +148,6 @@ select:focus-visible, input:focus-visible, textarea:focus-visible, button:focus-
 .bank-label { font-size: 14px; font-weight: 800; color: var(--ink-soft); }
 textarea { min-height: 220px; line-height: 1.6; font-weight: 500; resize: vertical; }
 .read { background: var(--paper); border-radius: 10px; padding: 12px 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
-.checks { display: flex; flex-direction: column; gap: 8px; }
-.checks label { display: flex; gap: 10px; align-items: flex-start; font-weight: 700; }
-.checks input { width: 24px; height: 24px; flex: none; margin-top: 2px; }
 
 /* teacher */
 .switch { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding-block: 14px; border-top: 2px dashed var(--line); }
@@ -268,13 +265,7 @@ textarea { min-height: 220px; line-height: 1.6; font-weight: 500; resize: vertic
       <div class="foot"><button class="quiet" id="fbRetry" type="button" hidden>Try again</button></div>
     </div>
     <div class="card">
-      <h2>Check my own writing</h2>
-      <div class="checks">
-        <label><input type="checkbox" id="ck1"> Every sentence starts with a capital letter.</label>
-        <label><input type="checkbox" id="ck2"> Every sentence ends with a full stop.</label>
-        <label><input type="checkbox" id="ck3"> I wrote in full sentences.</label>
-        <label><input type="checkbox" id="ck4"> I checked my spelling.</label>
-      </div>
+      <h2>What I wrote</h2>
       <h3>A) At the beach</h3><div class="read" id="readA"></div>
       <h3>B) At the cinema</h3><div class="read" id="readB"></div>
     </div>
@@ -846,7 +837,6 @@ function review2() {
   $("w2Hello").textContent = "Writing by " + me2.name;
   $("readA").textContent = s2.done.pa || "(nothing written)";
   $("readB").textContent = s2.done.pb || "(nothing written)";
-  ["ck1", "ck2", "ck3", "ck4"].forEach(function (id) { $(id).checked = false; });
   $("fbBody").textContent = ""; $("fbRetry").hidden = true; $("fbNote").textContent = "Checking your writing…";
   send(); feedback2();
 }
