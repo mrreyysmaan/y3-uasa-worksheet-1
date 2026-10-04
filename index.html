@@ -158,7 +158,14 @@ textarea { min-height: 220px; line-height: 1.6; font-weight: 500; resize: vertic
 .names div { display: flex; justify-content: space-between; gap: 12px; padding-block: 5px; border-top: 1px solid var(--line); }
 .names div span:first-child { min-width: 0; overflow-wrap: anywhere; }
 .names div span:last-child { font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.group { display: flex; flex-direction: column; gap: 6px; padding-block: 14px; border-top: 2px dashed var(--line); }
+#tLists { display: flex; flex-direction: column; gap: 12px; }
+.tablewrap { overflow-x: auto; }
+table.roll { border-collapse: collapse; width: 100%; font-size: 16px; }
+table.roll th { text-align: left; font-weight: 800; font-size: 14px; color: var(--ink-soft); padding: 6px 8px 6px 0; border-bottom: 2px solid var(--line); }
+table.roll td { padding: 6px 8px 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.roll td.got { font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
+table.roll td.none { color: var(--ink-soft); white-space: nowrap; }
+details summary { cursor: pointer; font-weight: 800; padding-block: 6px; }
 .linkbox { font-family: var(--mono); font-size: 15px; background: var(--paper); border-radius: 10px; padding: 10px 12px; overflow-wrap: anywhere; user-select: all; }
 @media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
 </style>
@@ -287,7 +294,7 @@ textarea { min-height: 220px; line-height: 1.6; font-weight: 500; resize: vertic
   </div>
   <div class="card">
     <h2>Who has submitted</h2>
-    <p class="task">Each pupil's first submission. The AI marks for Worksheet 2 are suggestions.</p>
+    <p class="task">Each pupil's first submission. Worksheet 2 shows the AI's suggested marks for paragraphs A and B.</p>
     <div id="tLists"></div>
     <div class="foot"><button class="quiet" id="tRefresh" type="button">Refresh</button></div>
   </div>
@@ -901,7 +908,6 @@ function renderTeacher(t) {
   SHEETS.forEach(function (s) {
     var row = el("div", "switch"), left = el("div"), on = !!t.open[s.id];
     left.appendChild(el("h3", "", s.name + " · " + s.sub));
-    left.appendChild(el("div", "soft", (t.submitted[s.id] || 0) + " of " + t.pupils + " pupils submitted"));
     var b = el("button", on ? "on" : "off", on ? "OPEN · tap to close" : "CLOSED · tap to open"); b.type = "button";
     b.addEventListener("click", function () {
       b.disabled = true; b.textContent = "Saving…"; $("tErr").hidden = true;
@@ -913,23 +919,74 @@ function renderTeacher(t) {
   });
   var lists = $("tLists"); lists.textContent = "";
   if (!t.lists) return;
-  function names(title, items, right) {
-    var g = el("div", "group"); g.appendChild(el("h3", "", title + " (" + items.length + ")"));
-    var box = el("div", "names");
-    items.forEach(function (p) {
-      var r = el("div"); r.appendChild(el("span", "", (p.no ? p.no + ". " : "") + (p.name || p.word)));
-      r.appendChild(el("span", "", right(p))); box.appendChild(r);
-    });
-    if (!items.length) g.appendChild(el("div", "soft", "Nobody yet."));
-    g.appendChild(box); lists.appendChild(g);
+  // One row per pupil, with a result for each worksheet.
+  var rows = {}, order = [];
+  function rowFor(p) {
+    var k = p.no ? "n" + p.no : "x" + p.name;
+    if (!rows[k]) { rows[k] = { no: p.no, name: p.name, res: {} }; order.push(k); }
+    return rows[k];
   }
   SHEETS.forEach(function (s) {
     var L = t.lists[s.id]; if (!L) return;
-    names(s.name + ": submitted", L.done, function (p) { return p.result; });
-    names(s.name + ": not submitted yet", L.missing, function () { return ""; });
-    if (L.missed && L.missed.length) names(s.name + ": most missed words", L.missed, function (p) { return p.wrong + (p.wrong === 1 ? " pupil" : " pupils"); });
+    L.done.forEach(function (p) { rowFor(p).res[s.id] = p.result; });
+    L.missing.forEach(function (p) { rowFor(p); });
+  });
+  order.sort(function (a, b) { return (rows[a].no || 999) - (rows[b].no || 999); });
+
+  SHEETS.forEach(function (s) {
+    var L = t.lists[s.id]; if (!L) return;
+    var line = el("div", "switch"), left = el("div"), label = "Copy names not submitted";
+    left.appendChild(el("h3", "", s.name));
+    left.appendChild(el("div", "soft", L.done.length + " of " + t.pupils + " submitted"));
+    var b = el("button", "quiet", L.missing.length ? label : "Everyone has submitted"); b.type = "button"; b.disabled = !L.missing.length;
+    var out = el("div", "linkbox"); out.hidden = true;
+    b.addEventListener("click", function () {
+      var text = s.name + ", not submitted yet (" + L.missing.length + "): " + L.missing.map(function (p) { return given(p.name); }).join(", ");
+      out.textContent = text;
+      navigator.clipboard.writeText(text).then(function () { b.textContent = "Copied"; setTimeout(function () { b.textContent = label; }, 2000); })
+        .catch(function () { out.hidden = false; });
+    });
+    line.appendChild(left); line.appendChild(b); lists.appendChild(line); lists.appendChild(out);
+  });
+
+  var fb = el("button", "quiet", onlyMissing ? "Show the whole class" : "Show only not submitted"); fb.type = "button"; fb.style.alignSelf = "flex-start";
+  fb.addEventListener("click", function () { onlyMissing = !onlyMissing; renderTeacher(t); });
+  lists.appendChild(fb);
+
+  var wrap = el("div", "tablewrap"), table = el("table", "roll"), head = el("tr");
+  head.appendChild(el("th", "", "Pupil"));
+  SHEETS.forEach(function (s) { head.appendChild(el("th", "", s.name)); });
+  table.appendChild(head);
+  var shown = 0;
+  order.forEach(function (k) {
+    var r = rows[k], owes = SHEETS.some(function (s) { return !r.res[s.id]; });
+    if (onlyMissing && !owes) return;
+    shown++;
+    var tr = el("tr"); tr.appendChild(el("td", "", (r.no ? r.no + ". " : "") + r.name));
+    SHEETS.forEach(function (s) { tr.appendChild(el("td", r.res[s.id] ? "got" : "none", r.res[s.id] || "not yet")); });
+    table.appendChild(tr);
+  });
+  wrap.appendChild(table); lists.appendChild(wrap);
+  if (!shown) lists.appendChild(el("div", "soft", "Every pupil has submitted both worksheets."));
+
+  SHEETS.forEach(function (s) {
+    var L = t.lists[s.id]; if (!L || !L.missed || !L.missed.length) return;
+    var d = el("details"), box = el("div", "names");
+    d.appendChild(el("summary", "", "Most missed words in " + s.name));
+    L.missed.forEach(function (m) {
+      var r = el("div"); r.appendChild(el("span", "", m.word));
+      r.appendChild(el("span", "", m.wrong + (m.wrong === 1 ? " pupil" : " pupils"))); box.appendChild(r);
+    });
+    d.appendChild(box); lists.appendChild(d);
   });
 }
+
+// "ADNI HASYA BINTI ADNAN SHAFEEQ" -> "Adni Hasya", for the reminder text
+function given(full) {
+  var s = String(full).replace(" (typed)", "").split(/\s+(?:BIN|BINTI)\s+/i)[0].toLowerCase();
+  return s.replace(/(^|[\s\-])([a-z])/g, function (m, a, b) { return a + b.toUpperCase(); });
+}
+var onlyMissing = false;
 $("tCopy").addEventListener("click", function () {
   var text = $("tLink").textContent, btn = $("tCopy");
   navigator.clipboard.writeText(text).then(function () { btn.textContent = "Copied"; setTimeout(function () { btn.textContent = "Copy link"; }, 2000); })
