@@ -157,6 +157,11 @@ textarea { min-height: 220px; line-height: 1.6; font-weight: 500; resize: vertic
 .switch div { min-width: 0; }
 .switch button.on { background: var(--good); }
 .switch button.off { background: var(--ink-soft); }
+.names { display: flex; flex-direction: column; }
+.names div { display: flex; justify-content: space-between; gap: 12px; padding-block: 5px; border-top: 1px solid var(--line); }
+.names div span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.names div span:last-child { font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.group { display: flex; flex-direction: column; gap: 6px; padding-block: 14px; border-top: 2px dashed var(--line); }
 .linkbox { font-family: var(--mono); font-size: 15px; background: var(--paper); border-radius: 10px; padding: 10px 12px; overflow-wrap: anywhere; user-select: all; }
 @media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
 </style>
@@ -291,6 +296,12 @@ textarea { min-height: 220px; line-height: 1.6; font-weight: 500; resize: vertic
     <p class="err" id="tErr" hidden>That did not save. Check your internet and try again.</p>
   </div>
   <div class="card">
+    <h2>Who has submitted</h2>
+    <p class="task">Each pupil's first submission. The AI marks for Worksheet 2 are suggestions.</p>
+    <div id="tLists"></div>
+    <div class="foot"><button class="quiet" id="tRefresh" type="button">Refresh</button></div>
+  </div>
+  <div class="card">
     <h2>Link for pupils</h2>
     <p class="task">Post this in your class group.</p>
     <div class="linkbox" id="tLink"></div>
@@ -298,8 +309,8 @@ textarea { min-height: 220px; line-height: 1.6; font-weight: 500; resize: vertic
   </div>
   <div class="card">
     <h2>Results</h2>
-    <p class="task">Answers, scores and who has not submitted yet.</p>
-    <div class="foot"><a class="btn" id="tResults" target="_blank" rel="noopener">Open results sheet</a><button class="quiet" id="tRefresh" type="button">Refresh counts</button></div>
+    <p class="task">Each pupil's answers, with AI marks and feedback for the writing.</p>
+    <div class="foot"><a class="btn" id="tResults" target="_blank" rel="noopener">Open results sheet</a></div>
   </div>
 </div>
 
@@ -801,8 +812,19 @@ var w2Submit = $("w2Submit"), armed2 = false, armTimer2;
 w2Submit.addEventListener("click", function () {
   var pa = (s2.para.a || "").trim(), pb = (s2.para.b || "").trim(), err = $("w2Err");
   if (!pa && !pb) { err.hidden = false; err.textContent = "Write your paragraphs first. Press Make my paragraph under each holiday."; return; }
-  if ((!pa || !pb) && !armed2) {
-    armed2 = true; err.hidden = false; err.textContent = "Your paragraph for " + (!pa ? "A) At the beach" : "B) At the cinema") + " is empty.";
+  // Warn about anything unfinished: an empty paragraph, or a picture section with no finished sentence.
+  var gaps = [];
+  TASKS.forEach(function (task) {
+    var label = task.id.toUpperCase() + ") ", bi = 0;
+    if (!(s2.para[task.id] || "").trim()) { gaps.push(label + "the whole paragraph"); return; }
+    task.secs.forEach(function (sec) {
+      var any = false;
+      sec.lines.forEach(function (line) { if (String(s2.blanks[task.id][bi] || "").trim()) any = true; bi += line.length; });
+      if (!any) gaps.push(label + sec.h);
+    });
+  });
+  if (gaps.length && !armed2) {
+    armed2 = true; err.hidden = false; err.textContent = "You have not finished: " + gaps.join(", ") + ". Go back and write about them to get more marks.";
     w2Submit.textContent = "Press again to submit anyway";
     clearTimeout(armTimer2); armTimer2 = setTimeout(function () { armed2 = false; w2Submit.textContent = "Submit to teacher"; }, 6000);
     return;
@@ -856,6 +878,7 @@ function showFeedback(fb) {
     var p = x[1]; if (!p) return;
     var box = el("div", "fb"); box.appendChild(el("h3", "", x[0]));
     var sc = el("div", "score", String(p.mark)); sc.appendChild(el("small", "", " / 15")); box.appendChild(sc);
+    if (p.missing && p.missing.length) box.appendChild(el("div", "err", "You did not write about: " + p.missing.join(", ") + ". Write about every picture to get more marks."));
     if (p.good && p.good.length) {
       box.appendChild(el("div", "bank-label", "What you did well"));
       var ul = el("ul"); p.good.forEach(function (g) { ul.appendChild(el("li", "", g)); }); box.appendChild(ul);
@@ -898,6 +921,24 @@ function renderTeacher(t) {
       }).catch(function () { $("tErr").hidden = false; b.disabled = false; b.textContent = on ? "OPEN · tap to close" : "CLOSED · tap to open"; });
     });
     row.appendChild(left); row.appendChild(b); box.appendChild(row);
+  });
+  var lists = $("tLists"); lists.textContent = "";
+  if (!t.lists) return;
+  function names(title, items, right) {
+    var g = el("div", "group"); g.appendChild(el("h3", "", title + " (" + items.length + ")"));
+    var box = el("div", "names");
+    items.forEach(function (p) {
+      var r = el("div"); r.appendChild(el("span", "", (p.no ? p.no + ". " : "") + (p.name || p.word)));
+      r.appendChild(el("span", "", right(p))); box.appendChild(r);
+    });
+    if (!items.length) g.appendChild(el("div", "soft", "Nobody yet."));
+    g.appendChild(box); lists.appendChild(g);
+  }
+  SHEETS.forEach(function (s) {
+    var L = t.lists[s.id]; if (!L) return;
+    names(s.name + ": submitted", L.done, function (p) { return p.result; });
+    names(s.name + ": not submitted yet", L.missing, function () { return ""; });
+    if (L.missed && L.missed.length) names(s.name + ": most missed words", L.missed, function (p) { return p.wrong + (p.wrong === 1 ? " pupil" : " pupils"); });
   });
 }
 $("tCopy").addEventListener("click", function () {
