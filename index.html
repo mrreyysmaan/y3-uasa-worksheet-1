@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>UASA Revision Worksheet 1</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=DM+Mono:wght@500&family=Nunito:wght@500;700;800&display=swap">
+<style>
+:root {
+  --paper: #e9f1fb;
+  --sheet: #ffffff;
+  --ink: #17264a;
+  --ink-soft: #55648a;
+  --line: #c5d3ea;
+  --marker: #ffc928;
+  --marker-ink: #3a2a00;
+  --blue: #2457d6;
+  --good: #12804a;
+  --good-bg: #dff5e8;
+  --bad: #c2321f;
+  --bad-bg: #fde6e1;
+  --hint-bg: #fff4cf;
+  --display: "Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+  --body: "Nunito", "Segoe UI", system-ui, sans-serif;
+  --mono: "DM Mono", "Consolas", ui-monospace, monospace;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: var(--body); font-size: 18px; line-height: 1.5; font-weight: 500;
+  padding-inline: 16px; padding-block: 0 48px;
+}
+.wrap { max-width: 640px; margin-inline: auto; display: flex; flex-direction: column; gap: 20px; }
+
+.strip {
+  position: sticky; top: 0; z-index: 5; background: var(--paper); padding-block: 10px;
+  display: flex; align-items: center; gap: 12px; border-bottom: 2px solid var(--line);
+}
+.strip b { font-family: var(--display); font-size: 20px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.bar { flex: 1; min-width: 0; height: 14px; border-radius: 99px; background: var(--sheet); border: 2px solid var(--line); overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: var(--marker); transition: width .3s; }
+
+header h1 { font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1.1; margin: 8px 0 4px; text-wrap: balance; }
+header p { margin: 0; color: var(--ink-soft); }
+.eyebrow { font-weight: 800; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
+
+.who { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+.who label { display: flex; flex-direction: column; gap: 4px; font-weight: 800; font-size: 14px; }
+.who select, .who input {
+  font: inherit; font-weight: 700; font-size: 18px; color: var(--ink);
+  background: var(--sheet); border: 2px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 100%; min-height: 50px;
+}
+.who .err { color: var(--bad); font-weight: 800; margin: 0; }
+
+.how { background: var(--hint-bg); border-radius: 12px; padding: 12px 14px; margin: 0; }
+.how b { font-weight: 800; }
+
+.module { background: var(--sheet); border-radius: 16px; padding: 18px 16px 16px; display: flex; flex-direction: column; gap: 12px; }
+h2 { font-family: var(--display); font-weight: 800; font-size: 24px; line-height: 1.15; margin: 0; }
+.module h2 span { display: inline-block; background: var(--marker); color: var(--marker-ink); border-radius: 8px; padding: 0 10px; margin-right: 8px; font-size: 16px; vertical-align: middle; }
+.module .task { margin: 0; color: var(--ink-soft); font-weight: 700; }
+ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+li.item { display: flex; flex-direction: column; gap: 10px; padding-block: 14px; border-top: 2px dashed var(--line); min-width: 0; }
+.clue b { color: var(--ink-soft); font-weight: 800; margin-right: 4px; font-variant-numeric: tabular-nums; }
+
+.words { display: flex; flex-wrap: wrap; gap: 10px 20px; }
+.word { position: relative; display: flex; gap: 4px; flex: 0 1 calc(var(--n) * 38px + (var(--n) - 1) * 4px); max-width: 100%; min-width: 0; }
+.tile {
+  flex: 1 1 0; min-width: 0; height: 46px; display: grid; place-items: center;
+  font-family: var(--mono); font-size: 21px; line-height: 1;
+  background: var(--paper); border: 2px solid var(--line); border-radius: 8px;
+}
+.tile.given { background: var(--marker); border-color: var(--marker); color: var(--marker-ink); }
+.tile.hinted { background: var(--hint-bg); border-style: dashed; border-color: var(--marker); }
+.word.focus .tile.next { border-color: var(--blue); box-shadow: 0 0 0 2px var(--blue); background: var(--sheet); }
+.word input {
+  position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0;
+  font-size: 16px; border: 0; padding: 0; margin: 0; background: transparent; color: transparent; cursor: text;
+}
+li.ok .tile { border-color: var(--good); background: var(--good-bg); color: var(--ink); }
+li.no .tile:not(.given) { border-color: var(--bad); background: var(--bad-bg); }
+
+.under { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; }
+.mark { font-weight: 800; font-size: 16px; border-radius: 8px; padding: 4px 10px; }
+li.ok .mark { color: var(--good); background: var(--good-bg); }
+li.no .mark { color: var(--bad); background: var(--bad-bg); }
+.pic { background: var(--hint-bg); border-radius: 10px; padding: 6px 12px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.pic span { font-size: 30px; line-height: 1.2; }
+
+button {
+  font-family: var(--display); font-weight: 800; font-size: 19px; cursor: pointer;
+  border: 0; border-radius: 12px; padding: 10px 18px; min-height: 48px;
+  background: var(--blue); color: #fff;
+}
+button:disabled { opacity: .45; cursor: default; }
+button.quiet { background: transparent; color: var(--ink-soft); border: 2px solid var(--line); font-size: 16px; }
+button.hint { background: var(--hint-bg); color: var(--marker-ink); border: 2px solid var(--marker); font-size: 16px; min-height: 40px; padding: 4px 12px; }
+button.big { font-size: 22px; min-height: 58px; background: var(--good); }
+select:focus-visible, input:focus-visible, button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+.foot { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+.foot span { font-weight: 800; }
+
+.panel { border: 3px solid var(--ink); border-radius: 16px; background: var(--sheet); padding: 18px 16px; display: flex; flex-direction: column; gap: 12px; }
+.panel p { margin: 0; }
+.total { font-family: var(--display); font-weight: 800; font-size: 54px; line-height: 1; font-variant-numeric: tabular-nums; }
+.total small { font-size: 24px; color: var(--ink-soft); }
+.chips { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.chips div { border: 2px solid var(--line); border-radius: 8px; text-align: center; padding: 4px 2px; font-weight: 800; font-size: 15px; font-variant-numeric: tabular-nums; }
+.chips div small { display: block; color: var(--ink-soft); font-size: 12px; }
+.chips div.full { background: var(--good-bg); border-color: var(--good); }
+.status { border-radius: 10px; padding: 10px 12px; font-weight: 800; background: var(--hint-bg); display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.status.sent { background: var(--good-bg); color: var(--good); }
+.status.fail { background: var(--bad-bg); color: var(--bad); }
+.fix { display: flex; flex-direction: column; }
+.fix li { padding-block: 12px; border-top: 2px dashed var(--line); display: flex; flex-direction: column; gap: 4px; }
+.fix .yours, .fix .right { font-family: var(--mono); font-size: 19px; letter-spacing: .06em; overflow-wrap: anywhere; }
+.fix .yours { color: var(--bad); }
+.fix .right { color: var(--good); }
+.fix small { font-family: var(--body); font-weight: 800; font-size: 14px; letter-spacing: 0; color: var(--ink-soft); display: inline-block; min-width: 7.5em; }
+.practise { background: var(--paper); border-radius: 10px; padding: 10px 12px; font-weight: 700; }
+@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="strip" aria-live="polite">
+    <b id="scoreTop">0 / 50</b>
+    <div class="bar"><i id="barFill"></i></div>
+  </div>
+
+  <header>
+    <div class="eyebrow">PdPR Year 3 English · 3 Pearl</div>
+    <h1>UASA Revision Worksheet 1</h1>
+    <p>50 words from Module 1 to Module 10.</p>
+    <div class="who">
+      <label for="pupil">Choose your name
+        <select id="pupil"></select>
+      </label>
+      <label for="otherName" id="otherWrap" hidden>Type your full name
+        <input id="otherName" type="text" autocomplete="off" autocapitalize="words" spellcheck="false" maxlength="80">
+      </label>
+      <p class="err" id="whoErr" hidden>Please choose your name first.</p>
+    </div>
+  </header>
+
+  <div id="work" class="wrap">
+    <p class="how"><b>How to do it:</b> Read the clue. The yellow letter is given. Tap the boxes and type the other letters. Press <b>Check</b> at the end of each module. Stuck? Press <b>Hint</b>. When you finish everything, press <b>Submit to teacher</b>.</p>
+    <main id="modules" class="wrap"></main>
+    <section class="panel">
+      <h2>Finished?</h2>
+      <p>Your teacher gets your answers when you press the button. You will then see the correct answers.</p>
+      <button class="big" id="submitBtn" type="button">Submit to teacher</button>
+    </section>
+  </div>
+
+  <section id="review" class="wrap" hidden>
+    <div class="panel">
+      <h2 id="rHello">My result</h2>
+      <div class="total"><span id="rTotal">0</span><small> / 50</small></div>
+      <div class="chips" id="chips"></div>
+      <div class="status" id="status"></div>
+    </div>
+    <div class="module">
+      <h2>Learn from my mistakes</h2>
+      <p class="task" id="fixNote"></p>
+      <ol class="fix" id="fix"></ol>
+      <div class="practise" id="practise" hidden></div>
+    </div>
+    <div class="foot">
+      <button id="againBtn" type="button">Try the worksheet again</button>
+    </div>
+  </section>
+</div>
+
+<script>
+// Web app address of the teacher's Google Sheet script. Leave empty until it is deployed.
+var ENDPOINT = "";
+var CLASS_NAME = "3 Pearl";
+var PUPILS = ["Adni Hasya", "Ahmad Fahim Mikael", "Aisyah Rania", "Amirul Muhaimin", "Aydan Ziyad", "Farah Aisyah",
+  "Harraz", "Isma Nur Imani", "Izz Muzaffar", "Mikayla Aleesya", "Mohamad Harith Sufyan", "Mohamad Shafwan Farhan",
+  "Muhammad Adam", "Muhammad Adha Hadif", "Muhammad Affan Zhafran", "Muhammad Al Fateh", "Muhammad Aniq Fauzan",
+  "Muhammad Asyraaf", "Muhammad Imaan Rayyan", "Muhammad Irfan Syahmi", "Muhammad Mifzal Khairullah",
+  "Muhammad Naqiuddin", "Muhammad Qaiser Aydeen", "Muhammad Wildan Zaeef", "Nabreesa Affina", "Noor Harriz",
+  "Nur Adra Fathia", "Nur Aish", "Nur Faiqah Hasna", "Nur Keisha Medina", "Nur Qarira Azkayra", "Nurfathiah Naura",
+  "Raisya Qarirah", "Siti Nur Aqilah", "Wan Nur Hana Safeeya", "Zill Fayyadh Hayqal"];
+
+// [clue, answer, picture hint, optional hint words]
+var MODULES = [
+  { t: "Welcome!", i: "Read the clues. Write the word.", q: [
+    ["You use this to write.", "Pen", "🖊️"],
+    ["You use this to carry your books.", "Bag", "🎒"],
+    ["You sit on this at school.", "Chair", "🪑"],
+    ["You use this to erase pencil marks.", "Rubber", "✏️🧽", "It rubs out mistakes."],
+    ["You use this to colour pictures.", "Crayons", "🖍️🖍️"] ] },
+  { t: "Every Day", i: "Read the clues. Write the correct word.", q: [
+    ["This person makes bread and cakes in a shop.", "Baker", "🧑‍🍳🍞"],
+    ["This person cuts and styles people's hair.", "Barber", "💈✂️"],
+    ["This person teaches children at school.", "Teacher", "🧑‍🏫"],
+    ["This person takes photographs of people and places.", "Photographer", "📸🧑"],
+    ["This person helps customers in a restaurant.", "Waiter", "🍽️🤵"] ] },
+  { t: "Right Now", i: "Look at the clues. Write the correct action.", q: [
+    ["You are using a book. You are …", "reading", "📖"],
+    ["You are using a pencil. You are …", "writing", "✍️"],
+    ["You are paying attention to someone. You are …", "listening", "👂"],
+    ["You are moving your body to music. You are …", "dancing", "💃🎵"],
+    ["You are making food. You are …", "cooking", "🍳"] ] },
+  { t: "Year In, Year Out", i: "Read the clues. Write the correct month or season.", q: [
+    ["This month comes after January.", "February", "📅", "Month number 2"],
+    ["This month comes before December.", "November", "📅", "Month number 11"],
+    ["The season when it is very hot.", "Summer", "☀️🏖️"],
+    ["The season after summer.", "Autumn", "🍂"],
+    ["The month when Christmas is celebrated.", "December", "🎄", "Month number 12"] ] },
+  { t: "My New House", i: "Read the clues. Write the correct room or place.", q: [
+    ["You cook food here.", "Kitchen", "🍳🔪"],
+    ["You sleep here.", "Bedroom", "🛏️"],
+    ["You have a shower here.", "Bathroom", "🚿🛁"],
+    ["You watch TV here.", "Living Room", "🛋️📺"],
+    ["You eat meals here.", "Dining Room", "🍽️🪑"] ] },
+  { t: "Food, Please!", i: "Read the clues. Write the correct food or drink.", q: [
+    ["It is yellow and monkeys like it.", "Banana", "🍌"],
+    ["It comes from chickens.", "Egg", "🥚"],
+    ["It is white and we drink it.", "Milk", "🥛"],
+    ["It is a red fruit.", "Apple", "🍎"],
+    ["It is a drink made from oranges.", "Orange Juice", "🍊🧃"] ] },
+  { t: "Out and About", i: "Read the clues. Write the correct place.", q: [
+    ["You can buy medicine here.", "Pharmacy", "💊🏪"],
+    ["You can borrow books here.", "Library", "📚"],
+    ["You can buy food here.", "Supermarket", "🛒"],
+    ["You can see animals here.", "Zoo", "🦁🐘"],
+    ["You can watch films here.", "Cinema", "🎬🍿"] ] },
+  { t: "Where Were You Yesterday?", i: "Read the clues. Write the correct place.", q: [
+    ["You can swim here.", "Swimming Pool", "🏊"],
+    ["You can play football here.", "Field", "⚽🌱"],
+    ["You can see many old things here.", "Museum", "🏛️🦖"],
+    ["You can see many books here.", "Library", "📚"],
+    ["You can learn here.", "School", "🏫"] ] },
+  { t: "On Holiday", i: "Read the clues. Write the correct word.", q: [
+    ["You travel in this on the road.", "Car", "🚗"],
+    ["You travel in this in the sky.", "Plane", "✈️"],
+    ["You sleep in this when you are on holiday.", "Hotel", "🏨"],
+    ["You carry your clothes in this.", "Suitcase", "🧳"],
+    ["You use this to take photographs.", "Camera", "📷"] ] },
+  { t: "The World Around Us", i: "Read the descriptions. What is the word?", q: [
+    ["This animal is very big and has a long trunk.", "Elephant", "🐘"],
+    ["This animal has a very long neck.", "Giraffe", "🦒"],
+    ["This animal lives in water and has sharp teeth.", "Crocodile", "🐊"],
+    ["This animal can fly and has colourful feathers.", "Parrot", "🦜"],
+    ["This animal is black and white and looks like a horse.", "Zebra", "🦓"] ] }
+];
+var Q = [];
+MODULES.forEach(function (m, mi) {
+  m.q.forEach(function (r) { Q.push({ clue: r[0], answer: r[1], words: r[1].split(" "), pic: r[2], tip: r[3] || "", mi: mi }); });
+});
+var TOTAL = Q.length, KEY = "uasa-ws1-v2";
+
+// state.q[n] = { t: typed letters per word, hp: hinted letters per word, pic: picture shown, tries, ok }
+var state = { pid: "", other: "", attempt: 1, q: {}, done: null, pending: [] };
+try { var saved = JSON.parse(localStorage.getItem(KEY)); if (saved && saved.q) state = saved; } catch (e) {}
+if (!state.pending) state.pending = [];
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+function qs(n) { return state.q[n] || (state.q[n] = { t: [], hp: [], pic: false, tries: 0, ok: false }); }
+function el(tag, cls, text) { var x = document.createElement(tag); if (cls) x.className = cls; if (text != null) x.textContent = text; return x; }
+function $(id) { return document.getElementById(id); }
+
+function full(n, wi) {
+  var w = Q[n - 1].words[wi], s = qs(n), hp = s.hp[wi] || 0;
+  return w[0] + w.slice(1, 1 + hp) + (s.t[wi] || "");
+}
+function wordRight(n, wi) { return full(n, wi).toLowerCase() === Q[n - 1].words[wi].toLowerCase(); }
+function allRight(n) { return Q[n - 1].words.every(function (w, wi) { return wordRight(n, wi); }); }
+function touched(n) { var s = qs(n); return s.t.some(function (v) { return v; }); }
+function usedHint(n) { var s = qs(n); return s.pic || s.hp.some(function (v) { return v > 0; }); }
+function moreLetters(n) {
+  var s = qs(n), found = -1;
+  Q[n - 1].words.forEach(function (w, wi) { if (found < 0 && !wordRight(n, wi) && (s.hp[wi] || 0) < w.length - 2) found = wi; });
+  return found;
+}
+// What the pupil's answer looks like, with _ for letters not filled in.
+function written(n) {
+  if (!touched(n)) return "";
+  return Q[n - 1].words.map(function (w, wi) { var f = full(n, wi); return f + new Array(w.length - f.length + 1).join("_"); }).join(" ");
+}
+
+/* ---------- build the worksheet ---------- */
+var host = $("modules");
+MODULES.forEach(function (m, mi) {
+  var sec = el("section", "module");
+  var h = el("h2"); h.appendChild(el("span", "", "Module " + (mi + 1))); h.appendChild(document.createTextNode(m.t));
+  sec.appendChild(h); sec.appendChild(el("p", "task", m.i));
+  var ol = el("ol");
+  for (var k = 1; k <= 5; k++) ol.appendChild(buildItem(mi * 5 + k));
+  sec.appendChild(ol);
+  var foot = el("div", "foot"), btn = el("button", "", "Check Module " + (mi + 1)); btn.type = "button";
+  var tally = el("span"); tally.id = "tally" + mi;
+  btn.addEventListener("click", function () { checkModule(mi); });
+  foot.appendChild(btn); foot.appendChild(tally); sec.appendChild(foot);
+  host.appendChild(sec);
+});
+
+function buildItem(n) {
+  var q = Q[n - 1], li = el("li", "item"); li.id = "q" + n;
+  var clue = el("div", "clue"); clue.appendChild(el("b", "", n + ".")); clue.appendChild(document.createTextNode(q.clue));
+  li.appendChild(clue);
+  var row = el("div", "words");
+  q.words.forEach(function (w, wi) {
+    var box = el("div", "word"); box.id = "w" + n + "_" + wi; box.style.setProperty("--n", w.length);
+    for (var i = 0; i < w.length; i++) box.appendChild(el("span", "tile"));
+    var inp = el("input"); inp.id = "a" + n + "_" + wi; inp.type = "text";
+    inp.setAttribute("autocomplete", "off"); inp.setAttribute("autocorrect", "off");
+    inp.setAttribute("autocapitalize", "off"); inp.setAttribute("spellcheck", "false");
+    inp.setAttribute("aria-label", "Question " + n + ": word with " + w.length + " letters, starting with " + w[0]);
+    inp.addEventListener("input", function () {
+      var s = qs(n), max = w.length - 1 - (s.hp[wi] || 0);
+      var v = inp.value.replace(/[^a-zA-Z]/g, "").toLowerCase().slice(0, max);
+      inp.value = v; s.t[wi] = v;
+      s.flag = false; li.classList.remove("no"); li.querySelector(".mark").hidden = true;
+      drawWord(n, wi); save();
+      if (v.length === max && wi + 1 < q.words.length && !wordRight(n, wi + 1)) $("a" + n + "_" + (wi + 1)).focus();
+    });
+    inp.addEventListener("focus", function () { box.classList.add("focus"); toEnd(inp); });
+    inp.addEventListener("click", function () { toEnd(inp); });
+    inp.addEventListener("blur", function () { box.classList.remove("focus"); });
+    box.appendChild(inp); row.appendChild(box);
+  });
+  li.appendChild(row);
+  var pic = el("div", "pic"); pic.hidden = true; li.appendChild(pic);
+  var under = el("div", "under");
+  var hb = el("button", "hint"); hb.type = "button";
+  hb.addEventListener("click", function () { giveHint(n); });
+  under.appendChild(hb); under.appendChild(el("span", "mark"));
+  li.appendChild(under);
+  return li;
+}
+function toEnd(inp) { try { var L = inp.value.length; inp.setSelectionRange(L, L); } catch (e) {} }
+
+function drawWord(n, wi) {
+  var w = Q[n - 1].words[wi], s = qs(n), hp = s.hp[wi] || 0, typed = s.t[wi] || "";
+  var box = $("w" + n + "_" + wi), tiles = box.querySelectorAll(".tile"), inp = box.querySelector("input");
+  for (var i = 0; i < w.length; i++) {
+    tiles[i].textContent = i === 0 ? w[0] : (i <= hp ? w[i] : (typed[i - 1 - hp] || ""));
+    tiles[i].className = "tile" + (i === 0 ? " given" : (i <= hp ? " hinted" : "")) + (i === 1 + hp + typed.length ? " next" : "");
+  }
+  inp.maxLength = w.length - 1 - hp;
+  if (inp.value !== typed) inp.value = typed;
+  inp.disabled = s.ok;
+}
+
+function paint(n) {
+  var q = Q[n - 1], s = qs(n), li = $("q" + n);
+  q.words.forEach(function (w, wi) { drawWord(n, wi); });
+  var bad = !s.ok && s.tries > 0 && s.flag;
+  li.classList.toggle("ok", s.ok); li.classList.toggle("no", bad);
+  var mark = li.querySelector(".mark");
+  mark.textContent = s.ok ? "✓ Correct" : (bad ? "✗ Try again" : ""); mark.hidden = !mark.textContent;
+  var pic = li.querySelector(".pic"); pic.hidden = !s.pic || s.ok;
+  if (s.pic) { pic.textContent = ""; pic.appendChild(el("span", "", q.pic)); if (q.tip) pic.appendChild(document.createTextNode(q.tip)); }
+  var hb = li.querySelector(".hint");
+  hb.hidden = s.ok;
+  if (!s.pic) { hb.textContent = "💡 Hint"; hb.disabled = false; }
+  else if (moreLetters(n) >= 0) { hb.textContent = "💡 One more letter"; hb.disabled = false; }
+  else { hb.textContent = "No more hints"; hb.disabled = true; }
+}
+
+function giveHint(n) {
+  var s = qs(n);
+  if (!s.pic) s.pic = true;
+  else {
+    var wi = moreLetters(n); if (wi < 0) return;
+    s.hp[wi] = (s.hp[wi] || 0) + 1; s.t[wi] = ""; s.flag = false;
+  }
+  paint(n); save();
+  var next = moreLetters(n);
+  var target = $("a" + n + "_" + (next >= 0 ? next : 0)); if (target && !target.disabled) target.focus();
+}
+
+function checkModule(mi) {
+  for (var k = 1; k <= 5; k++) {
+    var n = mi * 5 + k, s = qs(n);
+    if (s.ok || !touched(n)) continue;
+    if (allRight(n)) s.ok = true; else { s.tries++; s.flag = true; }
+    paint(n);
+  }
+  save(); totals();
+}
+
+function totals() {
+  var sum = 0;
+  MODULES.forEach(function (m, mi) {
+    var c = 0, any = false;
+    for (var k = 1; k <= 5; k++) { var s = qs(mi * 5 + k); if (s.ok) c++; if (s.ok || s.tries) any = true; }
+    sum += c; $("tally" + mi).textContent = any ? c + " / 5 correct" : "";
+  });
+  if (state.done) sum = state.done.score;
+  $("scoreTop").textContent = sum + " / " + TOTAL;
+  $("barFill").style.width = (sum / TOTAL * 100) + "%";
+}
+
+/* ---------- who is the pupil ---------- */
+var sel = $("pupil"), other = $("otherName");
+sel.appendChild(new Option("Tap here to choose", ""));
+PUPILS.forEach(function (p, i) { sel.appendChild(new Option((i + 1) + ". " + p, String(i + 1))); });
+sel.appendChild(new Option("My name is not here", "other"));
+sel.value = state.pid || ""; other.value = state.other || "";
+function who() {
+  $("otherWrap").hidden = sel.value !== "other";
+  state.pid = sel.value; state.other = other.value; $("whoErr").hidden = true; save();
+}
+sel.addEventListener("change", who); other.addEventListener("input", who);
+function identity() {
+  if (state.pid === "other") { var nm = (state.other || "").trim().replace(/\s+/g, " "); return nm.length >= 3 ? { no: "", name: nm, pid: "x:" + nm.toLowerCase() } : null; }
+  var i = parseInt(state.pid, 10);
+  return i >= 1 && i <= PUPILS.length ? { no: i, name: PUPILS[i - 1], pid: "n" + i } : null;
+}
+
+/* ---------- submit ---------- */
+var submitBtn = $("submitBtn"), armed = false, armTimer;
+submitBtn.addEventListener("click", function () {
+  var me = identity();
+  if (!me) { $("whoErr").hidden = false; $("whoErr").textContent = state.pid === "other" ? "Please type your full name first." : "Please choose your name first."; sel.scrollIntoView({ block: "center" }); return; }
+  var empty = 0; for (var n = 1; n <= TOTAL; n++) if (!touched(n) && !qs(n).ok) empty++;
+  if (empty && !armed) {
+    armed = true; submitBtn.textContent = empty + " empty question" + (empty > 1 ? "s" : "") + ". Press again to submit anyway";
+    clearTimeout(armTimer); armTimer = setTimeout(function () { armed = false; submitBtn.textContent = "Submit to teacher"; }, 6000);
+    return;
+  }
+  armed = false; clearTimeout(armTimer); submitBtn.textContent = "Submit to teacher";
+  var ok = "", hintMap = "", ans = [], hints = [], tries = [], score = 0;
+  for (n = 1; n <= TOTAL; n++) {
+    var s = qs(n), right = allRight(n), letters = s.hp.reduce(function (a, b) { return a + (b || 0); }, 0);
+    ok += right ? "1" : "0"; if (right) score++;
+    hintMap += usedHint(n) ? "1" : "0";
+    ans.push(written(n)); tries.push(s.tries);
+    hints.push(usedHint(n) ? "Q" + n + " " + (s.pic ? "picture" : "") + (letters ? " +" + letters + " letter" + (letters > 1 ? "s" : "") : "") : "");
+  }
+  var payload = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 10),
+    pid: me.pid, no: me.no, name: me.name, cls: CLASS_NAME, attempt: state.attempt,
+    score: score, ok: ok, hintMap: hintMap, ans: ans, tries: tries,
+    hints: hints.filter(function (x) { return x; }).join("; ")
+  };
+  state.done = { score: score, ok: ok, ans: ans, name: me.name };
+  state.pending.push(payload); save();
+  showReview(); window.scrollTo(0, 0); send();
+});
+
+function setStatus(kind, text, retry) {
+  var box = $("status"); box.className = "status" + (kind ? " " + kind : ""); box.textContent = text;
+  if (retry) { var b = el("button", "quiet", "Send again"); b.type = "button"; b.addEventListener("click", send); box.appendChild(b); }
+}
+var sending = false;
+function send() {
+  if (!state.pending.length) { if (state.done) setStatus("sent", "✓ Sent to your teacher."); return; }
+  if (!ENDPOINT) { setStatus("", "Saved on this device only. The teacher's answer sheet is not connected yet."); return; }
+  if (sending) return; sending = true;
+  setStatus("", "Sending to your teacher…");
+  var p = state.pending[0];
+  fetch(ENDPOINT, { method: "POST", body: JSON.stringify(p) })
+    .then(function (r) { return r.json(); })
+    .then(function (res) {
+      sending = false;
+      if (!res || !res.ok) throw new Error("refused");
+      state.pending.shift(); save(); send();
+    })
+    .catch(function () { sending = false; setStatus("fail", "Not sent yet. Check your internet, then press Send again.", true); });
+}
+
+/* ---------- review ---------- */
+function showReview() {
+  var d = state.done; if (!d) return;
+  $("work").hidden = true; $("review").hidden = false; sel.disabled = true; other.disabled = true;
+  $("rHello").textContent = "Result for " + d.name;
+  $("rTotal").textContent = d.score;
+  var chips = $("chips"); chips.textContent = "";
+  MODULES.forEach(function (m, mi) {
+    var c = 0; for (var k = 0; k < 5; k++) if (d.ok[mi * 5 + k] === "1") c++;
+    var chip = el("div", c === 5 ? "full" : ""); chip.appendChild(el("small", "", "M" + (mi + 1)));
+    chip.appendChild(document.createTextNode(c + "/5")); chips.appendChild(chip);
+  });
+  var fix = $("fix"), wrong = []; fix.textContent = "";
+  Q.forEach(function (q, i) {
+    if (d.ok[i] === "1") return;
+    wrong.push(q.answer);
+    var li = el("li"), clue = el("div", "clue"); clue.appendChild(el("b", "", (i + 1) + ".")); clue.appendChild(document.createTextNode(q.clue));
+    var y = el("div", "yours"); y.appendChild(el("small", "", "You wrote")); y.appendChild(document.createTextNode(d.ans[i] || "(nothing)"));
+    var r = el("div", "right"); r.appendChild(el("small", "", "Correct answer")); r.appendChild(document.createTextNode(q.answer));
+    li.appendChild(clue); li.appendChild(y); li.appendChild(r); fix.appendChild(li);
+  });
+  $("fixNote").textContent = wrong.length ? "Read each one. Look at the correct spelling. Say the word aloud." : "No mistakes. Excellent work!";
+  var pr = $("practise"); pr.hidden = !wrong.length;
+  if (wrong.length) pr.textContent = "Write these words 3 times in your exercise book: " + wrong.join(", ") + ".";
+  totals(); send();
+}
+
+$("againBtn").addEventListener("click", function () {
+  state.q = {}; state.done = null; state.attempt = (state.attempt || 1) + 1; save();
+  for (var n = 1; n <= TOTAL; n++) paint(n);
+  $("review").hidden = true; $("work").hidden = false; sel.disabled = false; other.disabled = false;
+  totals(); window.scrollTo(0, 0);
+});
+
+for (var n0 = 1; n0 <= TOTAL; n0++) paint(n0);
+who(); totals();
+if (state.done) showReview(); else if (state.pending.length) send();
+</script>
+</body>
+</html>
