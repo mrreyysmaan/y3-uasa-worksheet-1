@@ -135,8 +135,16 @@ select:focus-visible, input:focus-visible, textarea:focus-visible, button:focus-
 .sec img { width: 100%; max-width: 340px; border-radius: 10px; border: 2px solid var(--line); background: #fff; }
 .line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-weight: 700; }
 .line input.blank { flex: 1 1 8em; min-width: 6em; width: auto; padding: 6px 10px; border-style: dashed; border-color: var(--blue); background: var(--paper); }
-.bank { display: flex; flex-wrap: wrap; gap: 6px; }
-.bank button { min-height: 36px; padding: 2px 12px; font-family: var(--body); font-size: 16px; font-weight: 800; background: var(--hint-bg); color: var(--marker-ink); border: 2px solid var(--marker); border-radius: 99px; }
+.help { background: var(--hint-bg); border-radius: 10px; padding: 8px 12px; display: flex; flex-direction: column; gap: 2px; }
+.help b { font-weight: 800; }
+.help .bank-label { margin-bottom: 2px; }
+.fb { display: flex; flex-direction: column; gap: 10px; padding-block: 14px; border-top: 2px dashed var(--line); }
+.fb .score { font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1; }
+.fb .score small { font-size: 18px; color: var(--ink-soft); }
+.fb ul { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 4px; }
+.fb .swap { display: flex; flex-direction: column; gap: 2px; background: var(--paper); border-radius: 10px; padding: 8px 12px; }
+.fb .swap .yours { color: var(--bad); }
+.fb .swap .right { color: var(--good); font-weight: 800; }
 .bank-label { font-size: 14px; font-weight: 800; color: var(--ink-soft); }
 textarea { min-height: 220px; line-height: 1.6; font-weight: 500; resize: vertical; }
 .read { background: var(--paper); border-radius: 10px; padding: 12px 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
@@ -235,7 +243,7 @@ textarea { min-height: 220px; line-height: 1.6; font-weight: 500; resize: vertic
     <h1>Writing: My Holiday</h1>
   </header>
   <div id="w2Work" class="wrap">
-    <p class="how"><b>How to do it:</b> There are two holidays, A and B. Look at each picture and finish the sentences. You can tap a helper word to use it. Then press <b>Make my paragraph</b>, read it, and fix or add anything. Do both A and B, then press <b>Submit to teacher</b>.</p>
+    <p class="how"><b>How to do it:</b> There are two holidays, A and B. Look at each picture and finish the sentences. If you are stuck, press <b>Need help?</b> to see some words you can use. Then press <b>Make my paragraph</b>, read it, and fix or add anything. Do both A and B, then press <b>Submit to teacher</b>.</p>
     <main id="w2Tasks" class="wrap"></main>
     <section class="panel">
       <h2>Finished both paragraphs?</h2>
@@ -247,6 +255,12 @@ textarea { min-height: 220px; line-height: 1.6; font-weight: 500; resize: vertic
     <div class="panel">
       <h2 id="w2Hello">My writing</h2>
       <div class="status"></div>
+    </div>
+    <div class="card" id="fbCard">
+      <h2>Feedback on my writing</h2>
+      <p class="task" id="fbNote">Checking your writing…</p>
+      <div id="fbBody"></div>
+      <div class="foot"><button class="quiet" id="fbRetry" type="button" hidden>Try again</button></div>
     </div>
     <div class="card">
       <h2>Check my own writing</h2>
@@ -330,6 +344,7 @@ function send() {
     sending = false;
     if (!res || !res.ok) throw new Error("refused");
     queue.shift(); store(QKEY, queue); send();
+    if (current === "vW2" && s2 && s2.done) feedback2();
   }).catch(function () { sending = false; setStatus("fail", "Not sent yet. Check your internet, then press Send again.", true); });
 }
 
@@ -668,22 +683,21 @@ $("w1Again").addEventListener("click", function () {
    WORKSHEET 2: guided writing
    Each line is a sentence made of [starter] pieces; every piece is followed by one blank.
    ===================================================================== */
-var FEEL = ["fun", "exciting", "beautiful", "relaxing", "hot", "sunny", "windy", "amazing"];
-var BANK_B = ["cinema", "family", "friends", "movie", "popcorn", "drink", "shopping", "fun", "exciting", "funny", "delicious", "happy"];
+// help: [sentence starter, words that fit it]. Shown only when the pupil presses Need help.
 var TASKS = [
   { id: "a", title: "At the beach", end: "I had a great holiday!", secs: [
-    { h: "1. At the beach", img: "img/a1.webp", alt: "A family at the beach on a sunny day", lines: [["I went to", "with"], ["It was"]], bank: FEEL },
-    { h: "2. Activities", img: "img/a2.webp", alt: "A boy snorkelling with fish", lines: [["I went", "at"], ["It was"]], bank: ["snorkelling", "swimming"].concat(FEEL) },
-    { h: "3. On the beach", img: "img/a3.webp", alt: "Two children building a sandcastle", lines: [["We", "and"], ["It was"]], bank: ["built a sandcastle", "collected shells"].concat(FEEL) },
-    { h: "4. In the evening", img: "img/a4.webp", alt: "A girl eating and watching the sunset", lines: [["In the evening, I"], ["I ate"], ["It was"]], bank: FEEL } ] },
+    { h: "1. At the beach", img: "img/a1.webp", alt: "A family at the beach on a sunny day", lines: [["I went to", "with"], ["It was"]], help: [["It was", "fun, exciting, beautiful, hot, sunny, windy"]] },
+    { h: "2. Activities", img: "img/a2.webp", alt: "A boy snorkelling with fish", lines: [["I went", "at"], ["It was"]], help: [["I went", "snorkelling, swimming"], ["It was", "fun, exciting, amazing"]] },
+    { h: "3. On the beach", img: "img/a3.webp", alt: "Two children building a sandcastle", lines: [["We", "and"], ["It was"]], help: [["We", "built a sandcastle, collected shells"], ["It was", "fun, relaxing, exciting"]] },
+    { h: "4. In the evening", img: "img/a4.webp", alt: "A girl eating and watching the sunset", lines: [["In the evening, I"], ["I ate"], ["It was"]], help: [["In the evening, I", "saw …"], ["It was", "relaxing, beautiful, windy, amazing"]] } ] },
   { id: "b", title: "At the cinema", end: "I had a great holiday!", secs: [
-    { h: "1. Going to the cinema", img: "img/b1.webp", alt: "A family outside a cinema", lines: [["I went to"], ["I went with"], ["It was"]], bank: BANK_B },
-    { h: "2. At the cinema", img: "img/b2.webp", alt: "Two children watching a movie with popcorn", lines: [["I watched"], ["The movie was"], ["It was"]], bank: BANK_B },
-    { h: "3. After the movie", img: "img/b3.webp", alt: "Two children shopping with bags and a drink", lines: [["After the movie, we"], ["We went to"], ["I ate"], ["I drank"]], bank: BANK_B },
-    { h: "4. At home", img: "img/b4.webp", alt: "A girl resting happily at home", lines: [["When I got home, I"], ["I felt"], ["It was"]], bank: BANK_B } ] }
+    { h: "1. Going to the cinema", img: "img/b1.webp", alt: "A family outside a cinema", lines: [["I went to"], ["I went with"], ["It was"]], help: [["I went to", "the cinema"], ["I went with", "my family, my friends"], ["It was", "fun, exciting"]] },
+    { h: "2. At the cinema", img: "img/b2.webp", alt: "Two children watching a movie with popcorn", lines: [["I watched"], ["The movie was"], ["It was"]], help: [["I watched", "a movie"], ["The movie was", "funny, exciting"], ["It was", "fun"]] },
+    { h: "3. After the movie", img: "img/b3.webp", alt: "Two children shopping with bags and a drink", lines: [["After the movie, we"], ["We went to"], ["I ate"], ["I drank"]], help: [["After the movie, we", "went shopping"], ["I ate", "popcorn"], ["I drank", "a drink"]] },
+    { h: "4. At home", img: "img/b4.webp", alt: "A girl resting happily at home", lines: [["When I got home, I"], ["I felt"], ["It was"]], help: [["I felt", "happy"], ["It was", "fun, exciting"]] } ] }
 ];
-// s2 = { attempt, blanks: {a: [], b: []}, para: {a: "", b: ""}, done }
-var s2 = null, me2 = null, built2 = false, lastBlank = {};
+// s2 = { attempt, blanks: {a: [], b: []}, para: {a: "", b: ""}, help: {a0: true, ...}, done }
+var s2 = null, me2 = null, built2 = false;
 function save2() { store(stateKey("w2", me2), s2); }
 function countWords(t) { t = String(t || "").trim(); return t ? t.split(/\s+/).length : 0; }
 
@@ -704,23 +718,21 @@ function buildW2() {
           inp.setAttribute("autocomplete", "off"); inp.setAttribute("autocorrect", "off");
           inp.setAttribute("autocapitalize", "off"); inp.setAttribute("spellcheck", "false"); inp.maxLength = 80;
           inp.setAttribute("aria-label", starter + " …");
-          inp.dataset.sec = task.id + si;
           inp.addEventListener("input", function () { s2.blanks[task.id][idx] = inp.value; save2(); });
-          inp.addEventListener("focus", function () { lastBlank[task.id + si] = inp; });
           row.appendChild(el("span", "", starter)); row.appendChild(inp);
           if (pi === line.length - 1) row.appendChild(el("span", "", "."));
         });
         box.appendChild(row);
       });
       if (si === task.secs.length - 1) box.appendChild(el("div", "line", task.end));
-      box.appendChild(el("div", "bank-label", "Helper words (tap to use)"));
-      var bank = el("div", "bank");
-      sec.bank.forEach(function (word) {
-        var b = el("button", "", word); b.type = "button";
-        b.addEventListener("click", function () { useWord(task.id, si, box, word); });
-        bank.appendChild(b);
+      var hb = el("button", "hint", "Need help?"); hb.type = "button"; hb.id = "hb_" + task.id + si; hb.style.alignSelf = "flex-start";
+      var help = el("div", "help"); help.id = "help_" + task.id + si; help.hidden = true;
+      help.appendChild(el("div", "bank-label", "Words you can use. Type them yourself."));
+      sec.help.forEach(function (h) {
+        var row = el("div"); row.appendChild(el("b", "", h[0] + " … ")); row.appendChild(document.createTextNode(h[1])); help.appendChild(row);
       });
-      box.appendChild(bank); card.appendChild(box);
+      hb.addEventListener("click", function () { s2.help[task.id + si] = true; save2(); help.hidden = false; hb.hidden = true; });
+      box.appendChild(hb); box.appendChild(help); card.appendChild(box);
     });
     var pbox = el("div", "sec"); pbox.appendChild(el("h3", "", "My paragraph: " + task.title));
     var make = el("button", "", "Make my paragraph"); make.type = "button"; make.id = "make_" + task.id;
@@ -747,13 +759,6 @@ function buildW2() {
   built2 = true;
 }
 
-function useWord(tid, si, box, word) {
-  var inp = lastBlank[tid + si];
-  if (!inp) { var all = box.querySelectorAll("input.blank"); for (var i = 0; i < all.length && !inp; i++) if (!all[i].value.trim()) inp = all[i]; inp = inp || all[all.length - 1]; }
-  inp.value = inp.value.trim() ? inp.value.replace(/\s+$/, "") + " " + word : word;
-  inp.dispatchEvent(new Event("input"));
-}
-
 // Joins the finished sentences. A sentence is left out if its first blank is empty.
 function assemble(task) {
   var out = [], bi = 0, vals = s2.blanks[task.id];
@@ -774,10 +779,14 @@ function assemble(task) {
 }
 
 function startW2(me) {
-  me2 = me; s2 = load(stateKey("w2", me), null) || { attempt: 1, blanks: { a: [], b: [] }, para: { a: "", b: "" }, done: null };
+  me2 = me; s2 = load(stateKey("w2", me), null) || { attempt: 1, blanks: { a: [], b: [] }, para: { a: "", b: "" }, help: {}, done: null };
+  if (!s2.help) s2.help = {};
   if (!built2) buildW2();
-  lastBlank = {};
   TASKS.forEach(function (task) {
+    task.secs.forEach(function (sec, si) {
+      var shown = !!s2.help[task.id + si];
+      $("help_" + task.id + si).hidden = !shown; $("hb_" + task.id + si).hidden = shown;
+    });
     document.querySelectorAll('input[id^="b_' + task.id + '_"]').forEach(function (inp) {
       inp.value = s2.blanks[task.id][parseInt(inp.id.split("_")[2], 10)] || "";
     });
@@ -799,9 +808,15 @@ w2Submit.addEventListener("click", function () {
     return;
   }
   armed2 = false; clearTimeout(armTimer2); w2Submit.textContent = "Submit to teacher"; err.hidden = true;
-  queue.push({ a: "submit", c: SLUG, w: "w2", id: newId(), pid: me2.pid, no: me2.no, name: me2.name, attempt: s2.attempt, pa: pa, pb: pb });
+  var id = newId(), helped = [], same = [];
+  TASKS.forEach(function (task) {
+    task.secs.forEach(function (sec, si) { if (s2.help[task.id + si]) helped.push(task.id.toUpperCase() + (si + 1)); });
+    var p = (s2.para[task.id] || "").trim(); if (p && p === assemble(task)) same.push(task.id.toUpperCase());
+  });
+  queue.push({ a: "submit", c: SLUG, w: "w2", id: id, pid: me2.pid, no: me2.no, name: me2.name, attempt: s2.attempt, pa: pa, pb: pb,
+    help: helped.join(", "), same: same.join(", ") });
   store(QKEY, queue);
-  s2.done = { pa: pa, pb: pb }; save2();
+  s2.done = { id: id, pa: pa, pb: pb, fb: null }; save2();
   review2(); window.scrollTo(0, 0);
 });
 
@@ -811,7 +826,51 @@ function review2() {
   $("readA").textContent = s2.done.pa || "(nothing written)";
   $("readB").textContent = s2.done.pb || "(nothing written)";
   ["ck1", "ck2", "ck3", "ck4"].forEach(function (id) { $(id).checked = false; });
-  send();
+  $("fbBody").textContent = ""; $("fbRetry").hidden = true; $("fbNote").textContent = "Checking your writing…";
+  send(); feedback2();
+}
+
+// Asks for AI feedback once the submission has reached the teacher's sheet.
+var fbBusy = false;
+function feedback2() {
+  var d = s2.done; if (!d || !d.id) { $("fbCard").hidden = true; return; }
+  $("fbCard").hidden = false;
+  if (d.fb) { showFeedback(d.fb); return; }
+  if (fbBusy || queue.some(function (p) { return p.id === d.id; })) return;
+  fbBusy = true; $("fbRetry").hidden = true; $("fbNote").textContent = "Checking your writing… this takes about half a minute.";
+  post({ a: "feedback", cls: SLUG, id: d.id }).then(function (res) {
+    fbBusy = false;
+    if (!res || !res.ok) throw new Error("refused");
+    if (s2.done && s2.done.id === d.id) { s2.done.fb = res; save2(); showFeedback(res); }
+  }).catch(function () {
+    fbBusy = false; $("fbNote").textContent = "The feedback is not ready yet."; $("fbRetry").hidden = false;
+  });
+}
+$("fbRetry").addEventListener("click", feedback2);
+
+function showFeedback(fb) {
+  var body = $("fbBody"); body.textContent = ""; $("fbRetry").hidden = true;
+  if (fb.skipped) { $("fbNote").textContent = "Your teacher will read this writing and give you feedback."; return; }
+  $("fbNote").textContent = "These marks are suggestions. Your teacher will check them.";
+  [["A) At the beach", fb.a], ["B) At the cinema", fb.b]].forEach(function (x) {
+    var p = x[1]; if (!p) return;
+    var box = el("div", "fb"); box.appendChild(el("h3", "", x[0]));
+    var sc = el("div", "score", String(p.mark)); sc.appendChild(el("small", "", " / 15")); box.appendChild(sc);
+    if (p.good && p.good.length) {
+      box.appendChild(el("div", "bank-label", "What you did well"));
+      var ul = el("ul"); p.good.forEach(function (g) { ul.appendChild(el("li", "", g)); }); box.appendChild(ul);
+    }
+    if (p.fixes && p.fixes.length) {
+      box.appendChild(el("div", "bank-label", "Make it better"));
+      p.fixes.forEach(function (f) {
+        var sw = el("div", "swap");
+        sw.appendChild(el("div", "yours", "You wrote: " + f.yours));
+        sw.appendChild(el("div", "right", "Better: " + f.better));
+        sw.appendChild(el("div", "soft", f.why)); box.appendChild(sw);
+      });
+    }
+    body.appendChild(box);
+  });
 }
 $("w2Again").addEventListener("click", function () {
   s2.done = null; s2.attempt = (s2.attempt || 1) + 1; save2();
