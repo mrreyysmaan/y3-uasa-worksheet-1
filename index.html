@@ -870,7 +870,7 @@ if (TCODE) {
 } else {
   cfg = load("y3:" + SLUG + ":cfg", null);
   if (cfg) { renderHome(); show("vHome"); if (queue.length) send(); }
-  api({ a: "class", c: SLUG }).then(function (res) {
+  api({ a: "class", cls: SLUG }).then(function (res) {
     if (!res.ok) { if (!cfg) problem("This link is not right", "Please ask your teacher for the link again.", false); return; }
     var first = !cfg;
     cfg = { cls: res.cls, slug: res.slug, open: res.open, names: res.names }; store("y3:" + SLUG + ":cfg", cfg);
