@@ -162,6 +162,7 @@ li.ok .build button.chip { opacity: 1; border-color: var(--good); background: tr
 li.no .build { border-color: var(--bad); background: var(--bad-bg); }
 .fix .built { color: var(--bad); font-weight: 800; }
 .fix .answer { color: var(--good); font-weight: 800; }
+.fix .built small, .fix .answer small { margin-right: 8px; }
 
 /* teacher */
 .switch { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding-block: 14px; border-top: 2px dashed var(--line); }
@@ -1038,7 +1039,7 @@ function paint3(n) {
     line.appendChild(b);
   });
   if (s.pick.length) line.appendChild(el("span", "end", q.end));
-  var bank = li.querySelector(".bank"); bank.hidden = s.ok;
+  var bank = li.querySelector(".bank"); bank.hidden = s.ok || s.pick.length === q.bank.length;
   bank.querySelectorAll(".chip").forEach(function (b, bi) {
     var used = s.pick.indexOf(bi) >= 0; b.classList.toggle("used", used); b.disabled = used;
   });
